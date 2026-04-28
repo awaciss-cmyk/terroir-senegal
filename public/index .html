@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Terroir Sénégal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --vert: #1a6b2f;
+      --vert-clair: #e8f5ec;
+      --or: #c8860a;
+      --rouge: #c0392b;
+      --blanc: #fff;
+      --gris: #f4f4f2;
+      --texte: #1a1a1a;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--gris); color: var(--texte); }
+
+    /* HEADER */
+    header {
+      background: var(--vert);
+      color: white;
+      padding: 14px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+    }
+    header h1 { font-family: 'Playfair Display', serif; font-size: 1.5rem; }
+    .header-btns { display: flex; gap: 10px; align-items: center; }
+    .header-btns button {
+      background: rgba(255,255,255,0.15);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.3);
+      padding: 7px 14px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: background 0.2s;
+    }
+    .header-btns button:hover { background: rgba(255,255,255,0.3); }
+    #panier-btn { position: relative; }
+    #panier-count {
+      background: var(--or);
+      color: white;
+      border-radius: 50%;
+      padding: 1px 6px;
+      font-size: 0.75rem;
+      margin-left: 4px;
+    }
+
+    /* FILTRES */
+    .filtres {
+      display: flex;
+      gap: 10px;
+      padding: 16px 24px;
+      overflow-x: auto;
+      background: white;
+      border-bottom: 1px solid #ddd;
+    }
+    .filtres button {
+      background: var(--gris);
+      border: none;
+      padding: 7px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .filtres button.active, .filtres button:hover {
+      background: var(--vert);
+      color: white;
+    }
+
+    /* PRODUITS */
+    .container {
+      padding: 24px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 18px;
+    }
+    .card {
+      background: white;
+      border-radius: 14px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
+    .card img { width: 100%; height: 160px; object-fit: cover; }
+    .card-body { padding: 12px; }
+    .card-body h3 { font-size: 1rem; margin-bottom: 4px; }
+    .card-body .prix { color: var(--vert); font-weight: 600; font-size: 1rem; }
+    .card-body .stock { font-size: 0.78rem; color: #888; margin-bottom: 8px; }
+    .card-body .btn-ajouter {
+      background: var(--vert);
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+      font-size: 0.9rem;
+      transition: background 0.2s;
+    }
+    .card-body .btn-ajouter:hover { background: #145224; }
+
+    /* PANIER */
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 200;
+      justify-content: center;
+      align-items: center;
+    }
+    .overlay.show { display: flex; }
+    .modal {
+      background: white;
+      border-radius: 16px;
+      padding: 28px;
+      width: 90%;
+      max-width: 480px;
+      max-height: 85vh;
+      overflow-y: auto;
+      position: relative;
+    }
+    .modal h2 { font-family: 'Playfair Display', serif; margin-bottom: 18px; }
+    .modal .close {
+      position: absolute;
+      top: 14px; right: 18px;
+      background: none; border: none;
+      font-size: 1.4rem; cursor: pointer; color: #666;
+    }
+
+    /* LOGIN */
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; font-size: 0.85rem; margin-bottom: 5px; color: #555; }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-family: inherit;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      outline: none;
+      border-color: var(--vert);
+    }
+    .btn-primary {
+      background: var(--vert);
+      color: white;
+      border: none;
+      padding: 11px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      width: 100%;
+      transition: background 0.2s;
+    }
+    .btn-primary:hover { background: #145224; }
+    .btn-danger {
+      background: var(--rouge);
+      color: white;
+      border: none;
+      padding: 7px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+
+    /* PANIER ITEMS */
+    .panier-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+      font-size: 0.9rem;
+    }
+    .panier-total {
+      font-weight: 700;
+      font-size: 1.1rem;
+      text-align: right;
+      margin: 14px 0;
+      color: var(--vert);
+    }
+
+    /* ADMIN */
+    .admin-section { margin-bottom: 22px; }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .stat-card {
+      background: var(--vert-clair);
+      border-radius: 10px;
+      padding: 14px;
+      text-align: center;
+    }
+    .stat-card .val { font-size: 1.5rem; font-weight: 700; color: var(--vert); }
+    .stat-card .lab { font-size: 0.8rem; color: #555; }
+    .img-preview {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-top: 8px;
+      display: none;
+      border: 1px solid #ddd;
+    }
+    .tab-btns { display: flex; gap: 8px; margin-bottom: 16px; }
+    .tab-btn {
+      flex: 1;
+      padding: 8px;
+      border: 1px solid var(--vert);
+      border-radius: 8px;
+      background: white;
+      color: var(--vert);
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+    .tab-btn.active { background: var(--vert); color: white; }
+    .produit-list-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid #eee;
+      font-size: 0.88rem;
+    }
+    .produit-list-item img { width: 44px; height: 44px; object-fit: cover; border-radius: 6px; }
+    .produit-list-item .info { flex: 1; }
+    .msg { padding: 10px; border-radius: 8px; font-size: 0.88rem; margin-bottom: 10px; text-align: center; }
+    .msg.ok { background: #d4edda; color: #155724; }
+    .msg.err { background: #f8d7da; color: #721c24; }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <h1>🌿 Terroir Sénégal</h1>
+  <div class="header-btns">
+    <button onclick="ouvrirAdmin()" id="admin-btn" style="display:none">📊 Admin</button>
+    <button onclick="ouvrirLogin()" id="login-btn">🔑 Connexion</button>
+    <button onclick="deconnexion()" id="logout-btn" style="display:none">Déconnexion</button>
+    <button id="panier-btn" onclick="ouvrirPanier()">🛒 Panier <span id="panier-count">0</span></button>
+  </div>
+</header>
+
+<!-- FILTRES -->
+<div class="filtres">
+  <button class="active" onclick="filtrer('Tous', this)">Tout</button>
+  <button onclick="filtrer('Légumes', this)">🥬 Légumes</button>
+  <button onclick="filtrer('Fruits', this)">🥭 Fruits</button>
+  <button onclick="filtrer('Épices', this)">🌶️ Épices</button>
+  <button onclick="filtrer('Confitures', this)">🍯 Confitures</button>
+</div>
+
+<!-- PRODUITS -->
+<div class="container" id="produits"></div>
+
+<!-- OVERLAY LOGIN -->
+<div class="overlay" id="overlay-login">
+  <div class="modal">
+    <button class="close" onclick="fermer('overlay-login')">✕</button>
+    <h2>🔑 Connexion</h2>
+    <div id="login-msg"></div>
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" id="email" placeholder="admin@terroir.sn">
+    </div>
+    <div class="form-group">
+      <label>Mot de passe</label>
+      <input type="password" id="password" placeholder="••••••••">
+    </div>
+    <button class="btn-primary" onclick="login()">Se connecter</button>
+  </div>
+</div>
+
+<!-- OVERLAY PANIER -->
+<div class="overlay" id="overlay-panier">
+  <div class="modal">
+    <button class="close" onclick="fermer('overlay-panier')">✕</button>
+    <h2>🛒 Mon Panier</h2>
+    <div id="panier-contenu"></div>
+    <button class="btn-primary" onclick="commander()">💳 Commander & Payer</button>
+  </div>
+</div>
+
+<!-- OVERLAY ADMIN -->
+<div class="overlay" id="overlay-admin">
+  <div class="modal">
+    <button class="close" onclick="fermer('overlay-admin')">✕</button>
+    <h2>📊 Espace Administrateur</h2>
+
+    <div class="tab-btns">
+      <button class="tab-btn active" onclick="switchTab('stats', this)">📈 Stats</button>
+      <button class="tab-btn" onclick="switchTab('ajouter', this)">➕ Ajouter</button>
+      <button class="tab-btn" onclick="switchTab('liste', this)">📦 Produits</button>
+    </div>
+
+    <!-- STATS -->
+    <div id="tab-stats">
+      <div class="stats-grid">
+        <div class="stat-card"><div class="val" id="stat-ca">—</div><div class="lab">Chiffre d'affaires</div></div>
+        <div class="stat-card"><div class="val" id="stat-cmd">—</div><div class="lab">Commandes</div></div>
+        <div class="stat-card"><div class="val" id="stat-prod">—</div><div class="lab">Produits actifs</div></div>
+        <div class="stat-card"><div class="val" id="stat-users">—</div><div class="lab">Clients</div></div>
+      </div>
+    </div>
+
+    <!-- AJOUTER PRODUIT -->
+    <div id="tab-ajouter" style="display:none">
+      <div id="form-msg"></div>
+      <div class="form-group">
+        <label>Nom du produit</label>
+        <input type="text" id="p-nom" placeholder="Ex: Mangue Kent">
+      </div>
+      <div class="form-group">
+        <label>Catégorie</label>
+        <select id="p-cat">
+          <option>Légumes</option>
+          <option>Fruits</option>
+          <option>Épices</option>
+          <option>Confitures</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Prix (FCFA)</label>
+        <input type="number" id="p-prix" placeholder="500">
+      </div>
+      <div class="form-group">
+        <label>Stock</label>
+        <input type="number" id="p-stock" placeholder="50">
+      </div>
+      <div class="form-group">
+        <label>URL de l'image</label>
+        <input type="url" id="p-img" placeholder="https://exemple.com/image.jpg" oninput="previewImg(this.value)">
+        <img id="img-preview" class="img-preview" alt="Aperçu image">
+      </div>
+      <button class="btn-primary" onclick="ajouterProduit()">➕ Ajouter le produit</button>
+    </div>
+
+    <!-- LISTE PRODUITS -->
+    <div id="tab-liste" style="display:none">
+      <div id="admin-produits-liste"></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  let token = localStorage.getItem('token') || '';
+  let userRole = localStorage.getItem('role') || '';
+  let panier = [];
+  let tousLesProduits = [];
+
+  // ── Init ──────────────────────────────────────────────
+  init();
+  function init() {
+    if (token) {
+      document.getElementById('login-btn').style.display = 'none';
+      document.getElementById('logout-btn').style.display = 'inline-block';
+      if (userRole === 'admin') document.getElementById('admin-btn').style.display = 'inline-block';
+    }
+    loadProduits();
+  }
+
+  // ── Overlay ───────────────────────────────────────────
+  function fermer(id) { document.getElementById(id).classList.remove('show'); }
+  function ouvrirLogin() { document.getElementById('overlay-login').classList.add('show'); }
+  function ouvrirPanier() { renderPanier(); document.getElementById('overlay-panier').classList.add('show'); }
+  function ouvrirAdmin() { loadStats(); loadAdminProduits(); document.getElementById('overlay-admin').classList.add('show'); }
+
+  // ── Login ─────────────────────────────────────────────
+  async function login() {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+      if (data.success) {
+        token = data.token;
+        userRole = data.data?.role || '';
+        localStorage.setItem('token', token);
+        localStorage.setItem('role', userRole);
+        fermer('overlay-login');
+        init();
+      } else {
+        document.getElementById('login-msg').innerHTML = `<div class="msg err">${data.message}</div>`;
+      }
+    } catch (e) {
+      document.getElementById('login-msg').innerHTML = `<div class="msg err">Erreur de connexion</div>`;
+    }
+  }
+
+  function deconnexion() {
+    token = ''; userRole = '';
+    localStorage.removeItem('token');
+    localStorage.removeItem('role');
+    document.getElementById('login-btn').style.display = 'inline-block';
+    document.getElementById('logout-btn').style.display = 'none';
+    document.getElementById('admin-btn').style.display = 'none';
+  }
+
+  // ── Produits ──────────────────────────────────────────
+  async function loadProduits(cat = 'Tous') {
+    const url = cat === 'Tous' ? '/api/produits' : `/api/produits?cat=${encodeURIComponent(cat)}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    tousLesProduits = data.data || data || [];
+    renderProduits(tousLesProduits);
+  }
+
+  function renderProduits(liste) {
+    const container = document.getElementById('produits');
+    if (!liste.length) { container.innerHTML = '<p style="text-align:center;padding:40px;color:#888">Aucun produit trouvé.</p>'; return; }
+    container.innerHTML = liste.map(p => `
+      <div class="card">
+        <img src="${p.img || 'https://placehold.co/400x300?text=' + encodeURIComponent(p.nom)}" onerror="this.src='https://placehold.co/400x300?text=Image'" alt="${p.nom}">
+        <div class="card-body">
+          <h3>${p.nom}</h3>
+          <div class="stock">Stock : ${p.stock}</div>
+          <div class="prix">${p.prix.toLocaleString()} FCFA</div>
+          <button class="btn-ajouter" onclick="ajouterAuPanier('${p._id}', '${p.nom}', ${p.prix})">🛒 Ajouter</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function filtrer(cat, btn) {
+    document.querySelectorAll('.filtres button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    loadProduits(cat);
+  }
+
+  // ── Panier ────────────────────────────────────────────
+  function ajouterAuPanier(id, nom, prix) {
+    const exist = panier.find(p => p.id === id);
+    if (exist) { exist.qte++; } else { panier.push({ id, nom, prix, qte: 1 }); }
+    document.getElementById('panier-count').textContent = panier.reduce((s, p) => s + p.qte, 0);
+  }
+
+  function renderPanier() {
+    const div = document.getElementById('panier-contenu');
+    if (!panier.length) { div.innerHTML = '<p style="color:#888;text-align:center;padding:20px">Panier vide</p>'; return; }
+    const total = panier.reduce((s, p) => s + p.prix * p.qte, 0);
+    div.innerHTML = panier.map(p => `
+      <div class="panier-item">
+        <span>${p.nom} x${p.qte}</span>
+        <span>${(p.prix * p.qte).toLocaleString()} FCFA</span>
+      </div>
+    `).join('') + `<div class="panier-total">Total : ${total.toLocaleString()} FCFA</div>`;
+  }
+
+  function commander() {
+    if (!panier.length) return alert('Panier vide !');
+    alert('Commande passée ! Merci 🎉');
+    panier = [];
+    document.getElementById('panier-count').textContent = 0;
+    fermer('overlay-panier');
+  }
+
+  // ── Admin Tabs ────────────────────────────────────────
+  function switchTab(tab, btn) {
+    ['stats','ajouter','liste'].forEach(t => document.getElementById('tab-' + t).style.display = 'none');
+    document.getElementById('tab-' + tab).style.display = 'block';
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    if (tab === 'liste') loadAdminProduits();
+    if (tab === 'stats') loadStats();
+  }
+
+  // ── Stats ─────────────────────────────────────────────
+  async function loadStats() {
+    try {
+      const res = await fetch('/api/stats', { headers: { Authorization: 'Bearer ' + token } });
+      const data = await res.json();
+      if (data.success) {
+        const s = data.data;
+        document.getElementById('stat-ca').textContent = (s.chiffreAffaires || 0).toLocaleString() + ' F';
+        document.getElementById('stat-cmd').textContent = s.totalCommandes || 0;
+        document.getElementById('stat-prod').textContent = s.totalProduits || 0;
+        document.getElementById('stat-users').textContent = s.totalUtilisateurs || 0;
+      }
+    } catch(e) {}
+  }
+
+  // ── Aperçu image ──────────────────────────────────────
+  function previewImg(url) {
+    const img = document.getElementById('img-preview');
+    if (url) {
+      img.src = url;
+      img.style.display = 'block';
+      img.onerror = () => { img.style.display = 'none'; };
+    } else {
+      img.style.display = 'none';
+    }
+  }
+
+  // ── Ajouter produit ───────────────────────────────────
+  async function ajouterProduit() {
+    const nom   = document.getElementById('p-nom').value.trim();
+    const cat   = document.getElementById('p-cat').value;
+    const prix  = parseInt(document.getElementById('p-prix').value);
+    const stock = parseInt(document.getElementById('p-stock').value);
+    const img   = document.getElementById('p-img').value.trim();
+    const msgDiv = document.getElementById('form-msg');
+
+    if (!nom || !prix || !stock) {
+      msgDiv.innerHTML = '<div class="msg err">Remplis tous les champs obligatoires.</div>';
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/produits', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+        body: JSON.stringify({ nom, cat, prix, stock, img })
+      });
+      const data = await res.json();
+      if (data.success) {
+        msgDiv.innerHTML = '<div class="msg ok">✅ Produit ajouté avec succès !</div>';
+        document.getElementById('p-nom').value = '';
+        document.getElementById('p-prix').value = '';
+        document.getElementById('p-stock').value = '';
+        document.getElementById('p-img').value = '';
+        document.getElementById('img-preview').style.display = 'none';
+        loadProduits();
+      } else {
+        msgDiv.innerHTML = `<div class="msg err">${data.message}</div>`;
+      }
+    } catch(e) {
+      msgDiv.innerHTML = '<div class="msg err">Erreur serveur</div>';
+    }
+  }
+
+  // ── Liste produits admin ──────────────────────────────
+  async function loadAdminProduits() {
+    const res = await fetch('/api/produits');
+    const data = await res.json();
+    const liste = data.data || [];
+    const div = document.getElementById('admin-produits-liste');
+    if (!liste.length) { div.innerHTML = '<p style="color:#888">Aucun produit.</p>'; return; }
+    div.innerHTML = liste.map(p => `
+      <div class="produit-list-item">
+        <img src="${p.img || 'https://placehold.co/100?text=' + encodeURIComponent(p.nom)}" onerror="this.src='https://placehold.co/100?text=img'" alt="${p.nom}">
+        <div class="info">
+          <strong>${p.nom}</strong><br>
+          <span style="color:#888">${p.prix.toLocaleString()} FCFA — Stock: ${p.stock}</span>
+        </div>
+        <button class="btn-danger" onclick="supprimerProduit('${p._id}', this)">🗑</button>
+      </div>
+    `).join('');
+  }
+
+  async function supprimerProduit(id, btn) {
+    if (!confirm('Supprimer ce produit ?')) return;
+    const res = await fetch('/api/produits/' + id, {
+      method: 'DELETE',
+      headers: { Authorization: 'Bearer ' + token }
+    });
+    const data = await res.json();
+    if (data.success) { loadAdminProduits(); loadProduits(); }
+    else alert(data.message);
+  }
+</script>
+</body>
+</html>
