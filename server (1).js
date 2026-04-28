@@ -50,6 +50,7 @@ app.get('/api/seed', async (req, res) => {
   res.json({ success: true, message: 'Base de données initialisée !' });
 });
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/images', express.static(path.join(__dirname, 'public/images')));
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });

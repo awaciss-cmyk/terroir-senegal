@@ -13,7 +13,7 @@ exports.proteger = async (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     const user = await Utilisateur.findById(decoded.id).select('-password');
-    if (!user) return res.status(401).json({ success: false, message: 'Utilisateur introuvable' });
+    if (!user || !(await user.verifierPassword(password))) {
 
     req.user = user;
     next();
