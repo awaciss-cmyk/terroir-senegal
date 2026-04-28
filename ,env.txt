@@ -1,0 +1,4 @@
+MONGODB_URI=mongodb://localhost:27017/terroir_senegal
+JWT_SECRET=terroir_secret_2024
+PORT=5000
+NODE_ENV=development

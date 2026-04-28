@@ -1,0 +1,67 @@
+const express      = require('express');
+const jwt          = require('jsonwebtoken');
+const Utilisateur  = require('../models/Utilisateur');
+const { proteger } = require('../middleware/auth');
+
+const router = express.Router();
+
+// ── Génération du token ──────────────────────────────────────
+function genererToken(id) {
+  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+}
+
+// POST /api/auth/register — Créer un compte
+router.post('/register', async (req, res) => {
+  try {
+    const { nom, email, password, telephone } = req.body;
+    if (!nom || !email || !password) {
+      return res.status(400).json({ success: false, message: 'Nom, email et mot de passe requis' });
+    }
+
+    const existe = await Utilisateur.findOne({ email });
+    if (existe) return res.status(409).json({ success: false, message: 'Email déjà utilisé' });
+
+    const user = await Utilisateur.create({ nom, email, password, telephone });
+    const token = genererToken(user._id);
+
+    res.status(201).json({
+      success: true,
+      token,
+      user: { id: user._id, nom: user.nom, email: user.email, role: user.role },
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// POST /api/auth/login — Connexion
+router.post('/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(400).json({ success: false, message: 'Email et mot de passe requis' });
+    }
+
+    const user = await Utilisateur.findOne({ email });
+    if (!user || !(await user.verifierPassword(password))) {
+      return res.status(401).json({ success: false, message: 'Email ou mot de passe incorrect' });
+    }
+
+    const token = genererToken(user._id);
+
+    res.json({
+      success: true,
+      token,
+      user: { id: user._id, nom: user.nom, email: user.email, role: user.role, telephone: user.telephone },
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// GET /api/auth/me — Profil utilisateur connecté
+router.get('/me', proteger, (req, res) => {
+  res.json({ success: true, user: req.user });
+});
+
+module.exports = router;
