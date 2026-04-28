@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login</title>
+</head>
+<body>
+
+<h2>Connexion</h2>
+
+<input id="email" placeholder="Email"><br><br>
+<input id="password" type="password" placeholder="Mot de passe"><br><br>
+
+<button onclick="login()">Se connecter</button>
+
+<p id="msg"></p>
+
+<script>
+async function login() {
+  const res = await fetch('http://localhost:5000/api/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      email: email.value,
+      password: password.value
+    })
+  });
+
+  const data = await res.json();
+
+  if (!data.success) {
+    msg.innerText = data.message;
+    return;
+  }
+
+  localStorage.setItem('user', JSON.stringify(data.user));
+  localStorage.setItem('token', data.token);
+
+  if (data.user.role === 'admin') {
+    window.location.href = '/admin.html';
+  } else {
+    window.location.href = '/index.html';
+  }
+}
+</script>
+
+</body>
+</html>
