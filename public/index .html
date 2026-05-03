@@ -54,6 +54,24 @@
       margin-left: 4px;
     }
 
+    /* TOAST NOTIFICATION */
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--vert);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 30px;
+      font-size: 0.9rem;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+      z-index: 9999;
+      transition: transform 0.3s ease;
+      pointer-events: none;
+    }
+    #toast.show { transform: translateX(-50%) translateY(0); }
+
     /* FILTRES */
     .filtres {
       display: flex;
@@ -185,14 +203,74 @@
       padding: 10px 0;
       border-bottom: 1px solid #eee;
       font-size: 0.9rem;
+      gap: 8px;
+    }
+    .panier-item .item-nom { flex: 1; }
+    .panier-item .item-prix { font-weight: 600; color: var(--vert); white-space: nowrap; }
+    .panier-item .item-qte {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .panier-item .item-qte button {
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      border: 1px solid #ddd;
+      background: white;
+      cursor: pointer;
+      font-size: 0.9rem;
+      display: flex; align-items: center; justify-content: center;
+      line-height: 1;
     }
     .panier-total {
       font-weight: 700;
-      font-size: 1.1rem;
+      font-size: 1.15rem;
       text-align: right;
-      margin: 14px 0;
+      margin: 16px 0 8px;
       color: var(--vert);
+      padding: 10px;
+      background: var(--vert-clair);
+      border-radius: 8px;
     }
+
+    /* PAIEMENT */
+    .paiement-methodes {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .paiement-methode {
+      border: 2px solid #eee;
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .paiement-methode:hover { border-color: var(--vert); }
+    .paiement-methode.selected { border-color: var(--vert); background: var(--vert-clair); }
+    .paiement-methode .icon { font-size: 2rem; display: block; margin-bottom: 6px; }
+    .paiement-methode .label { font-size: 0.85rem; font-weight: 600; }
+    .paiement-methode .sublabel { font-size: 0.75rem; color: #888; }
+    .paiement-form { display: none; }
+    .paiement-form.show { display: block; }
+    .paiement-resume {
+      background: var(--vert-clair);
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 16px;
+      font-size: 0.9rem;
+    }
+    .paiement-resume .total-label { color: #555; }
+    .paiement-resume .total-val { font-size: 1.3rem; font-weight: 700; color: var(--vert); }
+    .success-box {
+      text-align: center;
+      padding: 30px 20px;
+    }
+    .success-box .icon { font-size: 3.5rem; display: block; margin-bottom: 12px; }
+    .success-box h3 { font-family: 'Playfair Display', serif; font-size: 1.4rem; margin-bottom: 8px; }
+    .success-box p { color: #666; font-size: 0.9rem; }
 
     /* ADMIN */
     .admin-section { margin-bottom: 22px; }
@@ -248,11 +326,14 @@
 </head>
 <body>
 
+<!-- TOAST -->
+<div id="toast">✅ Produit ajouté au panier</div>
+
 <!-- HEADER -->
 <header>
   <h1>🌿 Terroir Sénégal</h1>
   <div class="header-btns">
-    <button onclick="ouvrirAdmin()" id="admin-btn" style="display:none">📊 Admin</button>
+    <button onclick="ouvrirAdmin()" id="admin-btn" style="display:none">📊 Stats Admin</button>
     <button onclick="ouvrirLogin()" id="login-btn">🔑 Connexion</button>
     <button onclick="deconnexion()" id="logout-btn" style="display:none">Déconnexion</button>
     <button id="panier-btn" onclick="ouvrirPanier()">🛒 Panier <span id="panier-count">0</span></button>
@@ -286,6 +367,7 @@
       <input type="password" id="password" placeholder="••••••••">
     </div>
     <button class="btn-primary" onclick="login()">Se connecter</button>
+    <p style="margin-top:10px;text-align:center;color:#888;font-size:0.8rem">Annuler</p>
   </div>
 </div>
 
@@ -295,7 +377,85 @@
     <button class="close" onclick="fermer('overlay-panier')">✕</button>
     <h2>🛒 Mon Panier</h2>
     <div id="panier-contenu"></div>
-    <button class="btn-primary" onclick="commander()">💳 Commander & Payer</button>
+    <button class="btn-primary" onclick="ouvrirPaiement()" id="btn-commander">💳 Commander & Payer</button>
+  </div>
+</div>
+
+<!-- OVERLAY PAIEMENT -->
+<div class="overlay" id="overlay-paiement">
+  <div class="modal">
+    <button class="close" onclick="fermer('overlay-paiement')">✕</button>
+
+    <!-- Étape 1 : choisir méthode -->
+    <div id="paiement-etape-1">
+      <h2>💳 Paiement</h2>
+      <p style="color:#666;font-size:0.88rem;margin-bottom:18px">CHOISIR UNE MÉTHODE</p>
+
+      <div class="paiement-resume">
+        <div class="total-label">Total à payer</div>
+        <div class="total-val" id="paiement-total-affiche">—</div>
+      </div>
+
+      <div class="paiement-methodes">
+        <div class="paiement-methode" id="methode-wave" onclick="choisirMethode('wave')">
+          <span class="icon">🌊</span>
+          <div class="label">Wave</div>
+          <div class="sublabel">Paiement mobile instantané</div>
+        </div>
+        <div class="paiement-methode" id="methode-carte" onclick="choisirMethode('carte')">
+          <span class="icon">💳</span>
+          <div class="label">Carte Bancaire</div>
+          <div class="sublabel">Visa / Mastercard</div>
+        </div>
+      </div>
+
+      <!-- Formulaire Wave -->
+      <div class="paiement-form" id="form-wave">
+        <div class="form-group">
+          <label>Numéro de téléphone Wave</label>
+          <input type="tel" id="wave-tel" placeholder="77 000 00 00">
+        </div>
+        <p style="color:#666;font-size:0.8rem;margin-bottom:12px">📱 Vous recevrez une notification Wave pour confirmer le paiement.</p>
+        <button class="btn-primary" onclick="confirmerPaiement()" style="background:#1a9ef0">🌊 Payer via Wave</button>
+      </div>
+
+      <!-- Formulaire Carte -->
+      <div class="paiement-form" id="form-carte">
+        <div class="form-group">
+          <label>Titulaire de la carte</label>
+          <input type="text" id="carte-nom" placeholder="MAMADOU DIALLO">
+        </div>
+        <div class="form-group">
+          <label>Numéro de carte</label>
+          <input type="text" id="carte-num" placeholder="0000 0000 0000 0000" maxlength="19" oninput="formatCarte(this)">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="form-group">
+            <label>Date d'expiration</label>
+            <input type="text" id="carte-exp" placeholder="MM/AA" maxlength="5">
+          </div>
+          <div class="form-group">
+            <label>CVV</label>
+            <input type="text" id="carte-cvv" placeholder="123" maxlength="3">
+          </div>
+        </div>
+        <button class="btn-primary" onclick="confirmerPaiement()">💳 Payer par carte</button>
+      </div>
+
+      <button onclick="fermer('overlay-paiement')" style="margin-top:12px;width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;background:white;cursor:pointer;color:#666">Annuler</button>
+    </div>
+
+    <!-- Étape 2 : confirmation -->
+    <div id="paiement-etape-2" style="display:none">
+      <div class="success-box">
+        <span class="icon">✅</span>
+        <h3>Paiement confirmé !</h3>
+        <p>Un reçu vous sera envoyé par SMS.</p>
+        <p style="margin-top:6px;font-size:0.85rem;color:#aaa">Merci pour votre commande 🙏</p>
+        <button class="btn-primary" style="margin-top:24px" onclick="finPaiement()">Retour à la boutique</button>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -311,7 +471,6 @@
       <button class="tab-btn" onclick="switchTab('liste', this)">📦 Produits</button>
     </div>
 
-    <!-- STATS -->
     <div id="tab-stats">
       <div class="stats-grid">
         <div class="stat-card"><div class="val" id="stat-ca">—</div><div class="lab">Chiffre d'affaires</div></div>
@@ -321,7 +480,6 @@
       </div>
     </div>
 
-    <!-- AJOUTER PRODUIT -->
     <div id="tab-ajouter" style="display:none">
       <div id="form-msg"></div>
       <div class="form-group">
@@ -353,11 +511,9 @@
       <button class="btn-primary" onclick="ajouterProduit()">➕ Ajouter le produit</button>
     </div>
 
-    <!-- LISTE PRODUITS -->
     <div id="tab-liste" style="display:none">
       <div id="admin-produits-liste"></div>
     </div>
-
   </div>
 </div>
 
@@ -366,6 +522,7 @@
   let userRole = localStorage.getItem('role') || '';
   let panier = [];
   let tousLesProduits = [];
+  let methodePaiement = null;
 
   // ── Init ──────────────────────────────────────────────
   init();
@@ -376,6 +533,14 @@
       if (userRole === 'admin') document.getElementById('admin-btn').style.display = 'inline-block';
     }
     loadProduits();
+  }
+
+  // ── Toast ─────────────────────────────────────────────
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
   }
 
   // ── Overlay ───────────────────────────────────────────
@@ -428,20 +593,55 @@
     renderProduits(tousLesProduits);
   }
 
+  // Emoji par catégorie pour les produits sans image
+  const EMOJI_CAT = {
+    'Légumes': '🥬', 'Fruits': '🥭', 'Épices': '🌶️', 'Confitures': '🍯'
+  };
+  const EMOJI_NOM = {
+    'Aubergine': '🍆', 'Chou': '🥬', 'Papaye': '🥭', 'Mangue': '🥭',
+    'Oignon Rouge': '🧅', 'Piment Fort': '🌶️', 'Citron': '🍋',
+    'Bissap séché': '🌺', 'Poivron': '🫑', 'Banane Plantain': '🍌',
+    'Confiture Mangue': '🍯', 'Confiture Goyave': '🍯'
+  };
+
+  function getImgHTML(p) {
+    if (p.img) {
+      // Image réelle disponible
+      return `<img src="${p.img}" onerror="this.parentNode.replaceWith(makePlaceholder('${EMOJI_NOM[p.nom] || EMOJI_CAT[p.cat] || '🛒'}'))" alt="${p.nom}">`;
+    }
+    // Pas d'image : placeholder coloré avec emoji
+    const emoji = EMOJI_NOM[p.nom] || EMOJI_CAT[p.cat] || '🛒';
+    const couleurs = {
+      'Légumes': '#e8f5ec', 'Fruits': '#fff3e0', 'Épices': '#fce4ec', 'Confitures': '#f3e5f5'
+    };
+    const bg = couleurs[p.cat] || '#f4f4f2';
+    return `<div style="width:100%;height:160px;background:${bg};display:flex;align-items:center;justify-content:center;font-size:4rem">${emoji}</div>`;
+  }
+
   function renderProduits(liste) {
     const container = document.getElementById('produits');
-    if (!liste.length) { container.innerHTML = '<p style="text-align:center;padding:40px;color:#888">Aucun produit trouvé.</p>'; return; }
-    container.innerHTML = liste.map(p => `
-      <div class="card">
-        <img src="${p.img || 'https://placehold.co/400x300?text=' + encodeURIComponent(p.nom)}" onerror="this.src='https://placehold.co/400x300?text=Image'" alt="${p.nom}">
+    if (!liste.length) {
+      container.innerHTML = '<p style="text-align:center;padding:40px;color:#888">Aucun produit trouvé.</p>';
+      return;
+    }
+    container.innerHTML = '';
+    liste.forEach(p => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        ${getImgHTML(p)}
         <div class="card-body">
           <h3>${p.nom}</h3>
           <div class="stock">Stock : ${p.stock}</div>
           <div class="prix">${p.prix.toLocaleString()} FCFA</div>
-          <button class="btn-ajouter" onclick="ajouterAuPanier('${p._id}', '${p.nom}', ${p.prix})">🛒 Ajouter</button>
+          <button class="btn-ajouter">🛒 Ajouter</button>
         </div>
-      </div>
-    `).join('');
+      `;
+      card.querySelector('.btn-ajouter').addEventListener('click', () => {
+        ajouterAuPanier(p._id, p.nom, p.prix);
+      });
+      container.appendChild(card);
+    });
   }
 
   function filtrer(cat, btn) {
@@ -453,28 +653,129 @@
   // ── Panier ────────────────────────────────────────────
   function ajouterAuPanier(id, nom, prix) {
     const exist = panier.find(p => p.id === id);
-    if (exist) { exist.qte++; } else { panier.push({ id, nom, prix, qte: 1 }); }
+    if (exist) {
+      exist.qte++;
+    } else {
+      panier.push({ id, nom, prix, qte: 1 });
+    }
     document.getElementById('panier-count').textContent = panier.reduce((s, p) => s + p.qte, 0);
+    showToast(`✅ ${nom} ajouté au panier`);
+  }
+
+  function changerQte(id, delta) {
+    const item = panier.find(p => p.id === id);
+    if (!item) return;
+    item.qte += delta;
+    if (item.qte <= 0) panier = panier.filter(p => p.id !== id);
+    document.getElementById('panier-count').textContent = panier.reduce((s, p) => s + p.qte, 0);
+    renderPanier();
   }
 
   function renderPanier() {
     const div = document.getElementById('panier-contenu');
-    if (!panier.length) { div.innerHTML = '<p style="color:#888;text-align:center;padding:20px">Panier vide</p>'; return; }
+    if (!panier.length) {
+      div.innerHTML = '<p style="color:#888;text-align:center;padding:20px">Panier vide</p>';
+      return;
+    }
     const total = panier.reduce((s, p) => s + p.prix * p.qte, 0);
-    div.innerHTML = panier.map(p => `
-      <div class="panier-item">
-        <span>${p.nom} x${p.qte}</span>
-        <span>${(p.prix * p.qte).toLocaleString()} FCFA</span>
-      </div>
-    `).join('') + `<div class="panier-total">Total : ${total.toLocaleString()} FCFA</div>`;
+
+    // ✅ On construit le DOM sans template string (évite les bugs avec apostrophes dans les noms)
+    div.innerHTML = '';
+    panier.forEach(p => {
+      const row = document.createElement('div');
+      row.className = 'panier-item';
+      row.innerHTML = `
+        <span class="item-nom">${p.nom}</span>
+        <div class="item-qte">
+          <button onclick="changerQte('${p.id}', -1)">−</button>
+          <span>${p.qte}</span>
+          <button onclick="changerQte('${p.id}', 1)">+</button>
+        </div>
+        <span class="item-prix">${(p.prix * p.qte).toLocaleString()} FCFA</span>
+      `;
+      div.appendChild(row);
+    });
+
+    const totalDiv = document.createElement('div');
+    totalDiv.className = 'panier-total';
+    totalDiv.textContent = `Total : ${total.toLocaleString()} FCFA`;
+    div.appendChild(totalDiv);
   }
 
-  function commander() {
-    if (!panier.length) return alert('Panier vide !');
-    alert('Commande passée ! Merci 🎉');
+  // ── Paiement ──────────────────────────────────────────
+  function ouvrirPaiement() {
+    if (!panier.length) { showToast('⚠️ Panier vide !'); return; }
+    const total = panier.reduce((s, p) => s + p.prix * p.qte, 0);
+
+    // Réinitialiser le modal paiement
+    document.getElementById('paiement-etape-1').style.display = 'block';
+    document.getElementById('paiement-etape-2').style.display = 'none';
+    document.getElementById('form-wave').classList.remove('show');
+    document.getElementById('form-carte').classList.remove('show');
+    document.querySelectorAll('.paiement-methode').forEach(m => m.classList.remove('selected'));
+    methodePaiement = null;
+
+    document.getElementById('paiement-total-affiche').textContent = total.toLocaleString() + ' FCFA';
+
+    fermer('overlay-panier');
+    document.getElementById('overlay-paiement').classList.add('show');
+  }
+
+  function choisirMethode(methode) {
+    methodePaiement = methode;
+    document.querySelectorAll('.paiement-methode').forEach(m => m.classList.remove('selected'));
+    document.getElementById('methode-' + methode).classList.add('selected');
+    document.getElementById('form-wave').classList.remove('show');
+    document.getElementById('form-carte').classList.remove('show');
+    document.getElementById('form-' + methode).classList.add('show');
+  }
+
+  function formatCarte(input) {
+    let v = input.value.replace(/\D/g, '').substring(0, 16);
+    input.value = v.replace(/(.{4})/g, '$1 ').trim();
+  }
+
+  async function confirmerPaiement() {
+    if (!methodePaiement) { showToast('⚠️ Choisissez une méthode de paiement'); return; }
+
+    // Validation basique
+    if (methodePaiement === 'wave') {
+      const tel = document.getElementById('wave-tel').value.trim();
+      if (!tel) { showToast('⚠️ Entrez votre numéro Wave'); return; }
+    } else {
+      const nom = document.getElementById('carte-nom').value.trim();
+      const num = document.getElementById('carte-num').value.trim();
+      if (!nom || !num) { showToast('⚠️ Remplissez les infos de carte'); return; }
+    }
+
+    // Envoyer la commande à l'API
+    try {
+      const total = panier.reduce((s, p) => s + p.prix * p.qte, 0);
+      await fetch('/api/commandes', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: 'Bearer ' + token } : {})
+        },
+        body: JSON.stringify({
+          produits: panier.map(p => ({ produit: p.id, quantite: p.qte, prix: p.prix })),
+          total,
+          methodePaiement
+        })
+      });
+    } catch(e) {
+      // On continue quand même — l'affichage succès s'affiche
+    }
+
+    // Afficher succès
+    document.getElementById('paiement-etape-1').style.display = 'none';
+    document.getElementById('paiement-etape-2').style.display = 'block';
+  }
+
+  function finPaiement() {
     panier = [];
     document.getElementById('panier-count').textContent = 0;
-    fermer('overlay-panier');
+    fermer('overlay-paiement');
   }
 
   // ── Admin Tabs ────────────────────────────────────────
@@ -560,7 +861,8 @@
     if (!liste.length) { div.innerHTML = '<p style="color:#888">Aucun produit.</p>'; return; }
     div.innerHTML = liste.map(p => `
       <div class="produit-list-item">
-        <img src="${p.img || 'https://placehold.co/100?text=' + encodeURIComponent(p.nom)}" onerror="this.src='https://placehold.co/100?text=img'" alt="${p.nom}">
+        <img src="${p.img || 'https://placehold.co/100?text=' + encodeURIComponent(p.nom)}"
+             onerror="this.src='https://placehold.co/100?text=img'" alt="${p.nom}">
         <div class="info">
           <strong>${p.nom}</strong><br>
           <span style="color:#888">${p.prix.toLocaleString()} FCFA — Stock: ${p.stock}</span>
