@@ -1,10 +1,10 @@
 const express  = require('express');
 const Produit  = require('../models/Produit');
 const { proteger, adminSeulement } = require('../middleware/auth');
-
+const { upload } = require('../config/cloudinary');
 const router = express.Router();
 
-// GET /api/produits — Liste des produits (avec filtre optionnel par catégorie)
+// GET /api/produits
 router.get('/', async (req, res) => {
   try {
     const filtre = { actif: true };
@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// GET /api/produits/:id — Détail d'un produit
+// GET /api/produits/:id
 router.get('/:id', async (req, res) => {
   try {
     const p = await Produit.findById(req.params.id);
@@ -29,20 +29,28 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// POST /api/produits — Créer un produit (admin)
-router.post('/', proteger, adminSeulement, async (req, res) => {
+// POST /api/produits — avec upload image
+router.post('/', proteger, adminSeulement, upload.single('image'), async (req, res) => {
   try {
-    const p = await Produit.create(req.body);
+    const data = { ...req.body };
+    if (req.file) {
+      data.img = req.file.path;
+    }
+    const p = await Produit.create(data);
     res.status(201).json({ success: true, data: p });
   } catch (err) {
     res.status(400).json({ success: false, message: err.message });
   }
 });
 
-// PUT /api/produits/:id — Modifier un produit (admin)
-router.put('/:id', proteger, adminSeulement, async (req, res) => {
+// PUT /api/produits/:id — avec upload image
+router.put('/:id', proteger, adminSeulement, upload.single('image'), async (req, res) => {
   try {
-    const p = await Produit.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    const data = { ...req.body };
+    if (req.file) {
+      data.img = req.file.path;
+    }
+    const p = await Produit.findByIdAndUpdate(req.params.id, data, { new: true, runValidators: true });
     if (!p) return res.status(404).json({ success: false, message: 'Produit introuvable' });
     res.json({ success: true, data: p });
   } catch (err) {
@@ -50,7 +58,7 @@ router.put('/:id', proteger, adminSeulement, async (req, res) => {
   }
 });
 
-// DELETE /api/produits/:id — Désactiver un produit (admin, soft delete)
+// DELETE /api/produits/:id
 router.delete('/:id', proteger, adminSeulement, async (req, res) => {
   try {
     const p = await Produit.findByIdAndUpdate(req.params.id, { actif: false }, { new: true });

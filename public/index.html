@@ -17,8 +17,6 @@
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'DM Sans', sans-serif; background: var(--gris); color: var(--texte); }
-
-    /* HEADER */
     header {
       background: var(--vert);
       color: white;
@@ -53,8 +51,22 @@
       font-size: 0.75rem;
       margin-left: 4px;
     }
-
-    /* FILTRES */
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--vert);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 30px;
+      font-size: 0.9rem;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+      z-index: 9999;
+      transition: transform 0.3s ease;
+      pointer-events: none;
+    }
+    #toast.show { transform: translateX(-50%) translateY(0); }
     .filtres {
       display: flex;
       gap: 10px;
@@ -73,12 +85,7 @@
       white-space: nowrap;
       transition: all 0.2s;
     }
-    .filtres button.active, .filtres button:hover {
-      background: var(--vert);
-      color: white;
-    }
-
-    /* PRODUITS */
+    .filtres button.active, .filtres button:hover { background: var(--vert); color: white; }
     .container {
       padding: 24px;
       display: grid;
@@ -93,7 +100,41 @@
       transition: transform 0.2s, box-shadow 0.2s;
     }
     .card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
-    .card img { width: 100%; height: 160px; object-fit: cover; }
+    .card-img-wrap {
+      width: 100%;
+      height: 160px;
+      overflow: hidden;
+      position: relative;
+      background: #f0f0f0;
+    }
+    .card-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.3s ease;
+    }
+    .card:hover .card-img-wrap img { transform: scale(1.05); }
+    .card-img-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 4rem;
+    }
+    .card-badge {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: rgba(26, 107, 47, 0.85);
+      color: white;
+      font-size: 0.7rem;
+      font-weight: 500;
+      padding: 3px 9px;
+      border-radius: 20px;
+      backdrop-filter: blur(4px);
+    }
     .card-body { padding: 12px; }
     .card-body h3 { font-size: 1rem; margin-bottom: 4px; }
     .card-body .prix { color: var(--vert); font-weight: 600; font-size: 1rem; }
@@ -110,8 +151,6 @@
       transition: background 0.2s;
     }
     .card-body .btn-ajouter:hover { background: #145224; }
-
-    /* PANIER */
     .overlay {
       display: none;
       position: fixed;
@@ -139,8 +178,6 @@
       background: none; border: none;
       font-size: 1.4rem; cursor: pointer; color: #666;
     }
-
-    /* LOGIN */
     .form-group { margin-bottom: 14px; }
     .form-group label { display: block; font-size: 0.85rem; margin-bottom: 5px; color: #555; }
     .form-group input, .form-group select, .form-group textarea {
@@ -151,10 +188,8 @@
       font-size: 0.95rem;
       font-family: inherit;
     }
-    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-      outline: none;
-      border-color: var(--vert);
-    }
+    .form-group input[type="file"] { padding: 8px; cursor: pointer; }
+    .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--vert); }
     .btn-primary {
       background: var(--vert);
       color: white;
@@ -176,8 +211,6 @@
       cursor: pointer;
       font-size: 0.85rem;
     }
-
-    /* PANIER ITEMS */
     .panier-item {
       display: flex;
       justify-content: space-between;
@@ -185,29 +218,71 @@
       padding: 10px 0;
       border-bottom: 1px solid #eee;
       font-size: 0.9rem;
+      gap: 8px;
+    }
+    .panier-item .item-nom { flex: 1; }
+    .panier-item .item-prix { font-weight: 600; color: var(--vert); white-space: nowrap; }
+    .panier-item .item-qte { display: flex; align-items: center; gap: 6px; }
+    .panier-item .item-qte button {
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      border: 1px solid #ddd;
+      background: white;
+      cursor: pointer;
+      font-size: 0.9rem;
+      display: flex; align-items: center; justify-content: center;
     }
     .panier-total {
       font-weight: 700;
-      font-size: 1.1rem;
+      font-size: 1.15rem;
       text-align: right;
-      margin: 14px 0;
+      margin: 16px 0 8px;
       color: var(--vert);
+      padding: 10px;
+      background: var(--vert-clair);
+      border-radius: 8px;
     }
-
-    /* ADMIN */
-    .admin-section { margin-bottom: 22px; }
+    .paiement-methodes {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .paiement-methode {
+      border: 2px solid #eee;
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .paiement-methode:hover { border-color: var(--vert); }
+    .paiement-methode.selected { border-color: var(--vert); background: var(--vert-clair); }
+    .paiement-methode .icon { font-size: 2rem; display: block; margin-bottom: 6px; }
+    .paiement-methode .label { font-size: 0.85rem; font-weight: 600; }
+    .paiement-methode .sublabel { font-size: 0.75rem; color: #888; }
+    .paiement-form { display: none; }
+    .paiement-form.show { display: block; }
+    .paiement-resume {
+      background: var(--vert-clair);
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 16px;
+      font-size: 0.9rem;
+    }
+    .paiement-resume .total-label { color: #555; }
+    .paiement-resume .total-val { font-size: 1.3rem; font-weight: 700; color: var(--vert); }
+    .success-box { text-align: center; padding: 30px 20px; }
+    .success-box .icon { font-size: 3.5rem; display: block; margin-bottom: 12px; }
+    .success-box h3 { font-family: 'Playfair Display', serif; font-size: 1.4rem; margin-bottom: 8px; }
+    .success-box p { color: #666; font-size: 0.9rem; }
     .stats-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
       margin-bottom: 18px;
     }
-    .stat-card {
-      background: var(--vert-clair);
-      border-radius: 10px;
-      padding: 14px;
-      text-align: center;
-    }
+    .stat-card { background: var(--vert-clair); border-radius: 10px; padding: 14px; text-align: center; }
     .stat-card .val { font-size: 1.5rem; font-weight: 700; color: var(--vert); }
     .stat-card .lab { font-size: 0.8rem; color: #555; }
     .img-preview {
@@ -244,11 +319,19 @@
     .msg { padding: 10px; border-radius: 8px; font-size: 0.88rem; margin-bottom: 10px; text-align: center; }
     .msg.ok { background: #d4edda; color: #155724; }
     .msg.err { background: #f8d7da; color: #721c24; }
+    .upload-progress {
+      display: none;
+      text-align: center;
+      padding: 10px;
+      color: var(--vert);
+      font-size: 0.88rem;
+    }
   </style>
 </head>
 <body>
 
-<!-- HEADER -->
+<div id="toast"></div>
+
 <header>
   <h1>🌿 Terroir Sénégal</h1>
   <div class="header-btns">
@@ -259,7 +342,6 @@
   </div>
 </header>
 
-<!-- FILTRES -->
 <div class="filtres">
   <button class="active" onclick="filtrer('Tous', this)">Tout</button>
   <button onclick="filtrer('Légumes', this)">🥬 Légumes</button>
@@ -268,10 +350,9 @@
   <button onclick="filtrer('Confitures', this)">🍯 Confitures</button>
 </div>
 
-<!-- PRODUITS -->
 <div class="container" id="produits"></div>
 
-<!-- OVERLAY LOGIN -->
+<!-- LOGIN -->
 <div class="overlay" id="overlay-login">
   <div class="modal">
     <button class="close" onclick="fermer('overlay-login')">✕</button>
@@ -289,29 +370,90 @@
   </div>
 </div>
 
-<!-- OVERLAY PANIER -->
+<!-- PANIER -->
 <div class="overlay" id="overlay-panier">
   <div class="modal">
     <button class="close" onclick="fermer('overlay-panier')">✕</button>
     <h2>🛒 Mon Panier</h2>
     <div id="panier-contenu"></div>
-    <button class="btn-primary" onclick="commander()">💳 Commander & Payer</button>
+    <button class="btn-primary" onclick="ouvrirPaiement()">💳 Commander & Payer</button>
   </div>
 </div>
 
-<!-- OVERLAY ADMIN -->
+<!-- PAIEMENT -->
+<div class="overlay" id="overlay-paiement">
+  <div class="modal">
+    <button class="close" onclick="fermer('overlay-paiement')">✕</button>
+    <div id="paiement-etape-1">
+      <h2>💳 Paiement</h2>
+      <p style="color:#666;font-size:0.88rem;margin-bottom:18px">CHOISIR UNE MÉTHODE</p>
+      <div class="paiement-resume">
+        <div class="total-label">Total à payer</div>
+        <div class="total-val" id="paiement-total-affiche">—</div>
+      </div>
+      <div class="paiement-methodes">
+        <div class="paiement-methode" id="methode-wave" onclick="choisirMethode('wave')">
+          <span class="icon">🌊</span>
+          <div class="label">Wave</div>
+          <div class="sublabel">Paiement mobile instantané</div>
+        </div>
+        <div class="paiement-methode" id="methode-carte" onclick="choisirMethode('carte')">
+          <span class="icon">💳</span>
+          <div class="label">Carte Bancaire</div>
+          <div class="sublabel">Visa / Mastercard</div>
+        </div>
+      </div>
+      <div class="paiement-form" id="form-wave">
+        <div class="form-group">
+          <label>Numéro Wave</label>
+          <input type="tel" id="wave-tel" placeholder="77 000 00 00">
+        </div>
+        <button class="btn-primary" onclick="confirmerPaiement()" style="background:#1a9ef0">🌊 Payer via Wave</button>
+      </div>
+      <div class="paiement-form" id="form-carte">
+        <div class="form-group">
+          <label>Titulaire</label>
+          <input type="text" id="carte-nom" placeholder="MAMADOU DIALLO">
+        </div>
+        <div class="form-group">
+          <label>Numéro de carte</label>
+          <input type="text" id="carte-num" placeholder="0000 0000 0000 0000" maxlength="19" oninput="formatCarte(this)">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="form-group">
+            <label>Expiration</label>
+            <input type="text" id="carte-exp" placeholder="MM/AA" maxlength="5">
+          </div>
+          <div class="form-group">
+            <label>CVV</label>
+            <input type="text" id="carte-cvv" placeholder="123" maxlength="3">
+          </div>
+        </div>
+        <button class="btn-primary" onclick="confirmerPaiement()">💳 Payer par carte</button>
+      </div>
+      <button onclick="fermer('overlay-paiement')" style="margin-top:12px;width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;background:white;cursor:pointer;color:#666">Annuler</button>
+    </div>
+    <div id="paiement-etape-2" style="display:none">
+      <div class="success-box">
+        <span class="icon">✅</span>
+        <h3>Paiement confirmé !</h3>
+        <p>Merci pour votre commande 🙏</p>
+        <button class="btn-primary" style="margin-top:24px" onclick="finPaiement()">Retour à la boutique</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN -->
 <div class="overlay" id="overlay-admin">
   <div class="modal">
     <button class="close" onclick="fermer('overlay-admin')">✕</button>
     <h2>📊 Espace Administrateur</h2>
-
     <div class="tab-btns">
       <button class="tab-btn active" onclick="switchTab('stats', this)">📈 Stats</button>
       <button class="tab-btn" onclick="switchTab('ajouter', this)">➕ Ajouter</button>
       <button class="tab-btn" onclick="switchTab('liste', this)">📦 Produits</button>
     </div>
-
-    <!-- STATS -->
     <div id="tab-stats">
       <div class="stats-grid">
         <div class="stat-card"><div class="val" id="stat-ca">—</div><div class="lab">Chiffre d'affaires</div></div>
@@ -320,8 +462,6 @@
         <div class="stat-card"><div class="val" id="stat-users">—</div><div class="lab">Clients</div></div>
       </div>
     </div>
-
-    <!-- AJOUTER PRODUIT -->
     <div id="tab-ajouter" style="display:none">
       <div id="form-msg"></div>
       <div class="form-group">
@@ -346,18 +486,16 @@
         <input type="number" id="p-stock" placeholder="50">
       </div>
       <div class="form-group">
-        <label>URL de l'image</label>
-        <input type="url" id="p-img" placeholder="https://exemple.com/image.jpg" oninput="previewImg(this.value)">
-        <img id="img-preview" class="img-preview" alt="Aperçu image">
+        <label>Image du produit 📸</label>
+        <input type="file" id="p-img" accept="image/*" onchange="previewImg(this)">
+        <img id="img-preview" class="img-preview" alt="Aperçu">
       </div>
+      <div class="upload-progress" id="upload-progress">⏳ Upload en cours...</div>
       <button class="btn-primary" onclick="ajouterProduit()">➕ Ajouter le produit</button>
     </div>
-
-    <!-- LISTE PRODUITS -->
     <div id="tab-liste" style="display:none">
       <div id="admin-produits-liste"></div>
     </div>
-
   </div>
 </div>
 
@@ -366,8 +504,74 @@
   let userRole = localStorage.getItem('role') || '';
   let panier = [];
   let tousLesProduits = [];
+  let methodePaiement = null;
 
-  // ── Init ──────────────────────────────────────────────
+  const IMAGES_FALLBACK = {
+    'Aubergine':        'https://images.unsplash.com/photo-1659261200833-ec8761558af7?w=400&q=80',
+    'Chou':             'https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=400&q=80',
+    'Papaye':           'https://images.unsplash.com/photo-1617112848923-cc2234396a8d?w=400&q=80',
+    'Mangue':           'https://images.unsplash.com/photo-1601493700631-2b16ec4b4716?w=400&q=80',
+    'Oignon Rouge':     'https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?w=400&q=80',
+    'Piment Fort':      'https://images.unsplash.com/photo-1583119022894-919a68a3d0e3?w=400&q=80',
+    'Confiture Mangue': 'https://images.unsplash.com/photo-1597528380253-e8b7d384d2e2?w=400&q=80',
+    'Citron':           'https://images.unsplash.com/photo-1590502593747-42a996133562?w=400&q=80',
+    'Bissap séché':     'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=400&q=80',
+    'Poivron':          'https://images.unsplash.com/photo-1526346698789-22fd84314424?w=400&q=80',
+    'Banane Plantain':  'https://images.unsplash.com/photo-1590165482129-1b8b27698780?w=400&q=80',
+    'Confiture Goyave': 'https://images.unsplash.com/photo-1562529536-5b00c4c50d88?w=400&q=80',
+  };
+
+  const EMOJI_NOM = {
+    'Aubergine': '🍆', 'Chou': '🥬', 'Papaye': '🥭', 'Mangue': '🥭',
+    'Oignon Rouge': '🧅', 'Piment Fort': '🌶️', 'Citron': '🍋',
+    'Bissap séché': '🌺', 'Poivron': '🫑', 'Banane Plantain': '🍌',
+    'Confiture Mangue': '🍯', 'Confiture Goyave': '🍯'
+  };
+
+  const BG_CAT = {
+    'Légumes': '#e8f5ec', 'Fruits': '#fff3e0',
+    'Épices': '#fce4ec', 'Confitures': '#f3e5f5'
+  };
+
+  function resolveImg(p) {
+    if (p.img && p.img.startsWith('http')) return p.img;
+    return IMAGES_FALLBACK[p.nom] || null;
+  }
+
+  function renderCardImage(p) {
+    const src = resolveImg(p);
+    const emoji = EMOJI_NOM[p.nom] || '🛒';
+    const bg = BG_CAT[p.cat] || '#f4f4f2';
+    const wrap = document.createElement('div');
+    wrap.className = 'card-img-wrap';
+    const badge = document.createElement('span');
+    badge.className = 'card-badge';
+    badge.textContent = p.cat;
+    wrap.appendChild(badge);
+    if (src) {
+      const img = document.createElement('img');
+      img.alt = p.nom;
+      img.loading = 'lazy';
+      img.src = src;
+      img.onerror = function() {
+        this.remove();
+        const ph = document.createElement('div');
+        ph.className = 'card-img-placeholder';
+        ph.style.background = bg;
+        ph.textContent = emoji;
+        wrap.insertBefore(ph, badge);
+      };
+      wrap.insertBefore(img, badge);
+    } else {
+      const ph = document.createElement('div');
+      ph.className = 'card-img-placeholder';
+      ph.style.background = bg;
+      ph.textContent = emoji;
+      wrap.insertBefore(ph, badge);
+    }
+    return wrap;
+  }
+
   init();
   function init() {
     if (token) {
@@ -378,13 +582,18 @@
     loadProduits();
   }
 
-  // ── Overlay ───────────────────────────────────────────
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  }
+
   function fermer(id) { document.getElementById(id).classList.remove('show'); }
   function ouvrirLogin() { document.getElementById('overlay-login').classList.add('show'); }
   function ouvrirPanier() { renderPanier(); document.getElementById('overlay-panier').classList.add('show'); }
   function ouvrirAdmin() { loadStats(); loadAdminProduits(); document.getElementById('overlay-admin').classList.add('show'); }
 
-  // ── Login ─────────────────────────────────────────────
   async function login() {
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
@@ -419,7 +628,6 @@
     document.getElementById('admin-btn').style.display = 'none';
   }
 
-  // ── Produits ──────────────────────────────────────────
   async function loadProduits(cat = 'Tous') {
     const url = cat === 'Tous' ? '/api/produits' : `/api/produits?cat=${encodeURIComponent(cat)}`;
     const res = await fetch(url);
@@ -430,18 +638,29 @@
 
   function renderProduits(liste) {
     const container = document.getElementById('produits');
-    if (!liste.length) { container.innerHTML = '<p style="text-align:center;padding:40px;color:#888">Aucun produit trouvé.</p>'; return; }
-    container.innerHTML = liste.map(p => `
-      <div class="card">
-        <img src="${p.img || 'https://placehold.co/400x300?text=' + encodeURIComponent(p.nom)}" onerror="this.src='https://placehold.co/400x300?text=Image'" alt="${p.nom}">
-        <div class="card-body">
-          <h3>${p.nom}</h3>
-          <div class="stock">Stock : ${p.stock}</div>
-          <div class="prix">${p.prix.toLocaleString()} FCFA</div>
-          <button class="btn-ajouter" onclick="ajouterAuPanier('${p._id}', '${p.nom}', ${p.prix})">🛒 Ajouter</button>
-        </div>
-      </div>
-    `).join('');
+    if (!liste.length) {
+      container.innerHTML = '<p style="text-align:center;padding:40px;color:#888">Aucun produit trouvé.</p>';
+      return;
+    }
+    container.innerHTML = '';
+    liste.forEach(p => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.appendChild(renderCardImage(p));
+      const body = document.createElement('div');
+      body.className = 'card-body';
+      body.innerHTML = `
+        <h3>${p.nom}</h3>
+        <div class="stock">Stock : ${p.stock}</div>
+        <div class="prix">${p.prix.toLocaleString()} FCFA</div>
+        <button class="btn-ajouter">🛒 Ajouter</button>
+      `;
+      body.querySelector('.btn-ajouter').addEventListener('click', () => {
+        ajouterAuPanier(p._id, p.nom, p.prix);
+      });
+      card.appendChild(body);
+      container.appendChild(card);
+    });
   }
 
   function filtrer(cat, btn) {
@@ -450,34 +669,114 @@
     loadProduits(cat);
   }
 
-  // ── Panier ────────────────────────────────────────────
   function ajouterAuPanier(id, nom, prix) {
     const exist = panier.find(p => p.id === id);
-    if (exist) { exist.qte++; } else { panier.push({ id, nom, prix, qte: 1 }); }
+    if (exist) { exist.qte++; }
+    else { panier.push({ id, nom, prix, qte: 1 }); }
     document.getElementById('panier-count').textContent = panier.reduce((s, p) => s + p.qte, 0);
+    showToast(`✅ ${nom} ajouté au panier`);
+  }
+
+  function changerQte(id, delta) {
+    const item = panier.find(p => p.id === id);
+    if (!item) return;
+    item.qte += delta;
+    if (item.qte <= 0) panier = panier.filter(p => p.id !== id);
+    document.getElementById('panier-count').textContent = panier.reduce((s, p) => s + p.qte, 0);
+    renderPanier();
   }
 
   function renderPanier() {
     const div = document.getElementById('panier-contenu');
-    if (!panier.length) { div.innerHTML = '<p style="color:#888;text-align:center;padding:20px">Panier vide</p>'; return; }
+    if (!panier.length) {
+      div.innerHTML = '<p style="color:#888;text-align:center;padding:20px">Panier vide</p>';
+      return;
+    }
     const total = panier.reduce((s, p) => s + p.prix * p.qte, 0);
-    div.innerHTML = panier.map(p => `
-      <div class="panier-item">
-        <span>${p.nom} x${p.qte}</span>
-        <span>${(p.prix * p.qte).toLocaleString()} FCFA</span>
-      </div>
-    `).join('') + `<div class="panier-total">Total : ${total.toLocaleString()} FCFA</div>`;
+    div.innerHTML = '';
+    panier.forEach(p => {
+      const row = document.createElement('div');
+      row.className = 'panier-item';
+      row.innerHTML = `
+        <span class="item-nom">${p.nom}</span>
+        <div class="item-qte">
+          <button onclick="changerQte('${p.id}', -1)">−</button>
+          <span>${p.qte}</span>
+          <button onclick="changerQte('${p.id}', 1)">+</button>
+        </div>
+        <span class="item-prix">${(p.prix * p.qte).toLocaleString()} FCFA</span>
+      `;
+      div.appendChild(row);
+    });
+    const totalDiv = document.createElement('div');
+    totalDiv.className = 'panier-total';
+    totalDiv.textContent = `Total : ${total.toLocaleString()} FCFA`;
+    div.appendChild(totalDiv);
   }
 
-  function commander() {
-    if (!panier.length) return alert('Panier vide !');
-    alert('Commande passée ! Merci 🎉');
+  function ouvrirPaiement() {
+    if (!panier.length) { showToast('⚠️ Panier vide !'); return; }
+    const total = panier.reduce((s, p) => s + p.prix * p.qte, 0);
+    document.getElementById('paiement-etape-1').style.display = 'block';
+    document.getElementById('paiement-etape-2').style.display = 'none';
+    document.getElementById('form-wave').classList.remove('show');
+    document.getElementById('form-carte').classList.remove('show');
+    document.querySelectorAll('.paiement-methode').forEach(m => m.classList.remove('selected'));
+    methodePaiement = null;
+    document.getElementById('paiement-total-affiche').textContent = total.toLocaleString() + ' FCFA';
+    fermer('overlay-panier');
+    document.getElementById('overlay-paiement').classList.add('show');
+  }
+
+  function choisirMethode(methode) {
+    methodePaiement = methode;
+    document.querySelectorAll('.paiement-methode').forEach(m => m.classList.remove('selected'));
+    document.getElementById('methode-' + methode).classList.add('selected');
+    document.getElementById('form-wave').classList.remove('show');
+    document.getElementById('form-carte').classList.remove('show');
+    document.getElementById('form-' + methode).classList.add('show');
+  }
+
+  function formatCarte(input) {
+    let v = input.value.replace(/\D/g, '').substring(0, 16);
+    input.value = v.replace(/(.{4})/g, '$1 ').trim();
+  }
+
+  async function confirmerPaiement() {
+    if (!methodePaiement) { showToast('⚠️ Choisissez une méthode de paiement'); return; }
+    if (methodePaiement === 'wave') {
+      const tel = document.getElementById('wave-tel').value.trim();
+      if (!tel) { showToast('⚠️ Entrez votre numéro Wave'); return; }
+    } else {
+      const nom = document.getElementById('carte-nom').value.trim();
+      const num = document.getElementById('carte-num').value.trim();
+      if (!nom || !num) { showToast('⚠️ Remplissez les infos de carte'); return; }
+    }
+    try {
+      const total = panier.reduce((s, p) => s + p.prix * p.qte, 0);
+      await fetch('/api/commandes', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: 'Bearer ' + token } : {})
+        },
+        body: JSON.stringify({
+          produits: panier.map(p => ({ produit: p.id, quantite: p.qte, prix: p.prix })),
+          total,
+          methodePaiement
+        })
+      });
+    } catch(e) {}
+    document.getElementById('paiement-etape-1').style.display = 'none';
+    document.getElementById('paiement-etape-2').style.display = 'block';
+  }
+
+  function finPaiement() {
     panier = [];
     document.getElementById('panier-count').textContent = 0;
-    fermer('overlay-panier');
+    fermer('overlay-paiement');
   }
 
-  // ── Admin Tabs ────────────────────────────────────────
   function switchTab(tab, btn) {
     ['stats','ajouter','liste'].forEach(t => document.getElementById('tab-' + t).style.display = 'none');
     document.getElementById('tab-' + tab).style.display = 'block';
@@ -487,7 +786,6 @@
     if (tab === 'stats') loadStats();
   }
 
-  // ── Stats ─────────────────────────────────────────────
   async function loadStats() {
     try {
       const res = await fetch('/api/stats', { headers: { Authorization: 'Bearer ' + token } });
@@ -502,39 +800,48 @@
     } catch(e) {}
   }
 
-  // ── Aperçu image ──────────────────────────────────────
-  function previewImg(url) {
+  function previewImg(input) {
     const img = document.getElementById('img-preview');
-    if (url) {
-      img.src = url;
+    if (input.files && input.files[0]) {
+      img.src = URL.createObjectURL(input.files[0]);
       img.style.display = 'block';
-      img.onerror = () => { img.style.display = 'none'; };
     } else {
       img.style.display = 'none';
     }
   }
 
-  // ── Ajouter produit ───────────────────────────────────
   async function ajouterProduit() {
-    const nom   = document.getElementById('p-nom').value.trim();
-    const cat   = document.getElementById('p-cat').value;
-    const prix  = parseInt(document.getElementById('p-prix').value);
-    const stock = parseInt(document.getElementById('p-stock').value);
-    const img   = document.getElementById('p-img').value.trim();
-    const msgDiv = document.getElementById('form-msg');
+    const nom     = document.getElementById('p-nom').value.trim();
+    const cat     = document.getElementById('p-cat').value;
+    const prix    = parseInt(document.getElementById('p-prix').value);
+    const stock   = parseInt(document.getElementById('p-stock').value);
+    const imgFile = document.getElementById('p-img').files[0];
+    const msgDiv  = document.getElementById('form-msg');
+    const progress = document.getElementById('upload-progress');
 
     if (!nom || !prix || !stock) {
       msgDiv.innerHTML = '<div class="msg err">Remplis tous les champs obligatoires.</div>';
       return;
     }
 
+    const formData = new FormData();
+    formData.append('nom', nom);
+    formData.append('cat', cat);
+    formData.append('prix', prix);
+    formData.append('stock', stock);
+    if (imgFile) formData.append('image', imgFile);
+
+    progress.style.display = 'block';
+    msgDiv.innerHTML = '';
+
     try {
       const res = await fetch('/api/produits', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
-        body: JSON.stringify({ nom, cat, prix, stock, img })
+        headers: { Authorization: 'Bearer ' + token },
+        body: formData
       });
       const data = await res.json();
+      progress.style.display = 'none';
       if (data.success) {
         msgDiv.innerHTML = '<div class="msg ok">✅ Produit ajouté avec succès !</div>';
         document.getElementById('p-nom').value = '';
@@ -547,27 +854,32 @@
         msgDiv.innerHTML = `<div class="msg err">${data.message}</div>`;
       }
     } catch(e) {
+      progress.style.display = 'none';
       msgDiv.innerHTML = '<div class="msg err">Erreur serveur</div>';
     }
   }
 
-  // ── Liste produits admin ──────────────────────────────
   async function loadAdminProduits() {
     const res = await fetch('/api/produits');
     const data = await res.json();
     const liste = data.data || [];
     const div = document.getElementById('admin-produits-liste');
     if (!liste.length) { div.innerHTML = '<p style="color:#888">Aucun produit.</p>'; return; }
-    div.innerHTML = liste.map(p => `
-      <div class="produit-list-item">
-        <img src="${p.img || 'https://placehold.co/100?text=' + encodeURIComponent(p.nom)}" onerror="this.src='https://placehold.co/100?text=img'" alt="${p.nom}">
+    div.innerHTML = '';
+    liste.forEach(p => {
+      const src = resolveImg(p) || 'https://placehold.co/100?text=' + encodeURIComponent(p.nom);
+      const item = document.createElement('div');
+      item.className = 'produit-list-item';
+      item.innerHTML = `
+        <img src="${src}" onerror="this.src='https://placehold.co/100?text=img'" alt="${p.nom}">
         <div class="info">
           <strong>${p.nom}</strong><br>
           <span style="color:#888">${p.prix.toLocaleString()} FCFA — Stock: ${p.stock}</span>
         </div>
         <button class="btn-danger" onclick="supprimerProduit('${p._id}', this)">🗑</button>
-      </div>
-    `).join('');
+      `;
+      div.appendChild(item);
+    });
   }
 
   async function supprimerProduit(id, btn) {

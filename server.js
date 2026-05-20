@@ -34,6 +34,16 @@ app.get('/api/health', (req, res) => {
     message: 'Terroir Sénégal API opérationnelle 🌿'
   });
 });
+app.get('/api/debug', (req, res) => {
+  const fs = require('fs');
+  const files = fs.readdirSync(path.join(__dirname));
+  res.json({ dirname: __dirname, files });
+});
+app.get('/api/debug2', (req, res) => {
+  const fs = require('fs');
+  const files = fs.readdirSync(path.join(__dirname, 'public'));
+  res.json({ files });
+});
 
 // ── SEED (initialisation base de données) ─────────────
 app.get('/api/seed', async (req, res) => {
