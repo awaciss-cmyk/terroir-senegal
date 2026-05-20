@@ -19,7 +19,7 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
 // ── Fichiers statiques (HTML + images) ────────────────
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'publique')));
 
 // ── API ROUTES ────────────────────────────────────────
 app.use('/api/auth', authRoutes);
@@ -75,7 +75,7 @@ app.get('/api/seed', async (req, res) => {
 
 // ── Page frontend (React/HTML fallback) ───────────────
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.sendFile(path.join(__dirname, 'publique', 'index.html'));
 });
 
 // ── Erreurs ───────────────────────────────────────────
