@@ -17,8 +17,6 @@
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'DM Sans', sans-serif; background: var(--gris); color: var(--texte); }
-
-    /* HEADER */
     header {
       background: var(--vert);
       color: white;
@@ -53,8 +51,6 @@
       font-size: 0.75rem;
       margin-left: 4px;
     }
-
-    /* TOAST */
     #toast {
       position: fixed;
       bottom: 24px;
@@ -71,8 +67,6 @@
       pointer-events: none;
     }
     #toast.show { transform: translateX(-50%) translateY(0); }
-
-    /* FILTRES */
     .filtres {
       display: flex;
       gap: 10px;
@@ -91,12 +85,7 @@
       white-space: nowrap;
       transition: all 0.2s;
     }
-    .filtres button.active, .filtres button:hover {
-      background: var(--vert);
-      color: white;
-    }
-
-    /* PRODUITS */
+    .filtres button.active, .filtres button:hover { background: var(--vert); color: white; }
     .container {
       padding: 24px;
       display: grid;
@@ -111,8 +100,6 @@
       transition: transform 0.2s, box-shadow 0.2s;
     }
     .card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
-
-    /* Image du produit */
     .card-img-wrap {
       width: 100%;
       height: 160px;
@@ -128,7 +115,6 @@
       transition: transform 0.3s ease;
     }
     .card:hover .card-img-wrap img { transform: scale(1.05); }
-    /* Placeholder emoji si image absente */
     .card-img-placeholder {
       width: 100%;
       height: 100%;
@@ -137,7 +123,6 @@
       justify-content: center;
       font-size: 4rem;
     }
-    /* Badge catégorie sur l'image */
     .card-badge {
       position: absolute;
       top: 8px;
@@ -150,7 +135,6 @@
       border-radius: 20px;
       backdrop-filter: blur(4px);
     }
-
     .card-body { padding: 12px; }
     .card-body h3 { font-size: 1rem; margin-bottom: 4px; }
     .card-body .prix { color: var(--vert); font-weight: 600; font-size: 1rem; }
@@ -167,8 +151,6 @@
       transition: background 0.2s;
     }
     .card-body .btn-ajouter:hover { background: #145224; }
-
-    /* OVERLAYS */
     .overlay {
       display: none;
       position: fixed;
@@ -196,8 +178,6 @@
       background: none; border: none;
       font-size: 1.4rem; cursor: pointer; color: #666;
     }
-
-    /* FORMS */
     .form-group { margin-bottom: 14px; }
     .form-group label { display: block; font-size: 0.85rem; margin-bottom: 5px; color: #555; }
     .form-group input, .form-group select, .form-group textarea {
@@ -208,10 +188,8 @@
       font-size: 0.95rem;
       font-family: inherit;
     }
-    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-      outline: none;
-      border-color: var(--vert);
-    }
+    .form-group input[type="file"] { padding: 8px; cursor: pointer; }
+    .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--vert); }
     .btn-primary {
       background: var(--vert);
       color: white;
@@ -233,8 +211,6 @@
       cursor: pointer;
       font-size: 0.85rem;
     }
-
-    /* PANIER ITEMS */
     .panier-item {
       display: flex;
       justify-content: space-between;
@@ -246,11 +222,7 @@
     }
     .panier-item .item-nom { flex: 1; }
     .panier-item .item-prix { font-weight: 600; color: var(--vert); white-space: nowrap; }
-    .panier-item .item-qte {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
+    .panier-item .item-qte { display: flex; align-items: center; gap: 6px; }
     .panier-item .item-qte button {
       width: 24px; height: 24px;
       border-radius: 50%;
@@ -259,7 +231,6 @@
       cursor: pointer;
       font-size: 0.9rem;
       display: flex; align-items: center; justify-content: center;
-      line-height: 1;
     }
     .panier-total {
       font-weight: 700;
@@ -271,8 +242,6 @@
       background: var(--vert-clair);
       border-radius: 8px;
     }
-
-    /* PAIEMENT */
     .paiement-methodes {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -303,28 +272,17 @@
     }
     .paiement-resume .total-label { color: #555; }
     .paiement-resume .total-val { font-size: 1.3rem; font-weight: 700; color: var(--vert); }
-    .success-box {
-      text-align: center;
-      padding: 30px 20px;
-    }
+    .success-box { text-align: center; padding: 30px 20px; }
     .success-box .icon { font-size: 3.5rem; display: block; margin-bottom: 12px; }
     .success-box h3 { font-family: 'Playfair Display', serif; font-size: 1.4rem; margin-bottom: 8px; }
     .success-box p { color: #666; font-size: 0.9rem; }
-
-    /* ADMIN */
-    .admin-section { margin-bottom: 22px; }
     .stats-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
       margin-bottom: 18px;
     }
-    .stat-card {
-      background: var(--vert-clair);
-      border-radius: 10px;
-      padding: 14px;
-      text-align: center;
-    }
+    .stat-card { background: var(--vert-clair); border-radius: 10px; padding: 14px; text-align: center; }
     .stat-card .val { font-size: 1.5rem; font-weight: 700; color: var(--vert); }
     .stat-card .lab { font-size: 0.8rem; color: #555; }
     .img-preview {
@@ -361,24 +319,29 @@
     .msg { padding: 10px; border-radius: 8px; font-size: 0.88rem; margin-bottom: 10px; text-align: center; }
     .msg.ok { background: #d4edda; color: #155724; }
     .msg.err { background: #f8d7da; color: #721c24; }
+    .upload-progress {
+      display: none;
+      text-align: center;
+      padding: 10px;
+      color: var(--vert);
+      font-size: 0.88rem;
+    }
   </style>
 </head>
 <body>
 
-<div id="toast">✅ Produit ajouté au panier</div>
+<div id="toast"></div>
 
-<!-- HEADER -->
 <header>
   <h1>🌿 Terroir Sénégal</h1>
   <div class="header-btns">
-    <button onclick="ouvrirAdmin()" id="admin-btn" style="display:none">📊 Stats Admin</button>
+    <button onclick="ouvrirAdmin()" id="admin-btn" style="display:none">📊 Admin</button>
     <button onclick="ouvrirLogin()" id="login-btn">🔑 Connexion</button>
     <button onclick="deconnexion()" id="logout-btn" style="display:none">Déconnexion</button>
     <button id="panier-btn" onclick="ouvrirPanier()">🛒 Panier <span id="panier-count">0</span></button>
   </div>
 </header>
 
-<!-- FILTRES -->
 <div class="filtres">
   <button class="active" onclick="filtrer('Tous', this)">Tout</button>
   <button onclick="filtrer('Légumes', this)">🥬 Légumes</button>
@@ -387,10 +350,9 @@
   <button onclick="filtrer('Confitures', this)">🍯 Confitures</button>
 </div>
 
-<!-- PRODUITS -->
 <div class="container" id="produits"></div>
 
-<!-- OVERLAY LOGIN -->
+<!-- LOGIN -->
 <div class="overlay" id="overlay-login">
   <div class="modal">
     <button class="close" onclick="fermer('overlay-login')">✕</button>
@@ -405,21 +367,20 @@
       <input type="password" id="password" placeholder="••••••••">
     </div>
     <button class="btn-primary" onclick="login()">Se connecter</button>
-    <p style="margin-top:10px;text-align:center;color:#888;font-size:0.8rem">Annuler</p>
   </div>
 </div>
 
-<!-- OVERLAY PANIER -->
+<!-- PANIER -->
 <div class="overlay" id="overlay-panier">
   <div class="modal">
     <button class="close" onclick="fermer('overlay-panier')">✕</button>
     <h2>🛒 Mon Panier</h2>
     <div id="panier-contenu"></div>
-    <button class="btn-primary" onclick="ouvrirPaiement()" id="btn-commander">💳 Commander & Payer</button>
+    <button class="btn-primary" onclick="ouvrirPaiement()">💳 Commander & Payer</button>
   </div>
 </div>
 
-<!-- OVERLAY PAIEMENT -->
+<!-- PAIEMENT -->
 <div class="overlay" id="overlay-paiement">
   <div class="modal">
     <button class="close" onclick="fermer('overlay-paiement')">✕</button>
@@ -444,15 +405,14 @@
       </div>
       <div class="paiement-form" id="form-wave">
         <div class="form-group">
-          <label>Numéro de téléphone Wave</label>
+          <label>Numéro Wave</label>
           <input type="tel" id="wave-tel" placeholder="77 000 00 00">
         </div>
-        <p style="color:#666;font-size:0.8rem;margin-bottom:12px">📱 Vous recevrez une notification Wave pour confirmer le paiement.</p>
         <button class="btn-primary" onclick="confirmerPaiement()" style="background:#1a9ef0">🌊 Payer via Wave</button>
       </div>
       <div class="paiement-form" id="form-carte">
         <div class="form-group">
-          <label>Titulaire de la carte</label>
+          <label>Titulaire</label>
           <input type="text" id="carte-nom" placeholder="MAMADOU DIALLO">
         </div>
         <div class="form-group">
@@ -461,7 +421,7 @@
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
           <div class="form-group">
-            <label>Date d'expiration</label>
+            <label>Expiration</label>
             <input type="text" id="carte-exp" placeholder="MM/AA" maxlength="5">
           </div>
           <div class="form-group">
@@ -477,15 +437,14 @@
       <div class="success-box">
         <span class="icon">✅</span>
         <h3>Paiement confirmé !</h3>
-        <p>Un reçu vous sera envoyé par SMS.</p>
-        <p style="margin-top:6px;font-size:0.85rem;color:#aaa">Merci pour votre commande 🙏</p>
+        <p>Merci pour votre commande 🙏</p>
         <button class="btn-primary" style="margin-top:24px" onclick="finPaiement()">Retour à la boutique</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- OVERLAY ADMIN -->
+<!-- ADMIN -->
 <div class="overlay" id="overlay-admin">
   <div class="modal">
     <button class="close" onclick="fermer('overlay-admin')">✕</button>
@@ -527,10 +486,11 @@
         <input type="number" id="p-stock" placeholder="50">
       </div>
       <div class="form-group">
-        <label>URL de l'image</label>
-        <input type="url" id="p-img" placeholder="https://images.unsplash.com/..." oninput="previewImg(this.value)">
-        <img id="img-preview" class="img-preview" alt="Aperçu image">
+        <label>Image du produit 📸</label>
+        <input type="file" id="p-img" accept="image/*" onchange="previewImg(this)">
+        <img id="img-preview" class="img-preview" alt="Aperçu">
       </div>
+      <div class="upload-progress" id="upload-progress">⏳ Upload en cours...</div>
       <button class="btn-primary" onclick="ajouterProduit()">➕ Ajouter le produit</button>
     </div>
     <div id="tab-liste" style="display:none">
@@ -546,7 +506,6 @@
   let tousLesProduits = [];
   let methodePaiement = null;
 
-  // Images de fallback par produit (si le serveur n'a pas d'image)
   const IMAGES_FALLBACK = {
     'Aubergine':        'https://images.unsplash.com/photo-1659261200833-ec8761558af7?w=400&q=80',
     'Chou':             'https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=400&q=80',
@@ -574,9 +533,8 @@
     'Épices': '#fce4ec', 'Confitures': '#f3e5f5'
   };
 
-  // Résoudre l'image d'un produit : priorité à l'URL stockée, sinon fallback par nom
   function resolveImg(p) {
-    if (p.img && !p.img.startsWith('/images/')) return p.img;
+    if (p.img && p.img.startsWith('http')) return p.img;
     return IMAGES_FALLBACK[p.nom] || null;
   }
 
@@ -586,12 +544,10 @@
     const bg = BG_CAT[p.cat] || '#f4f4f2';
     const wrap = document.createElement('div');
     wrap.className = 'card-img-wrap';
-
     const badge = document.createElement('span');
     badge.className = 'card-badge';
     badge.textContent = p.cat;
     wrap.appendChild(badge);
-
     if (src) {
       const img = document.createElement('img');
       img.alt = p.nom;
@@ -616,7 +572,6 @@
     return wrap;
   }
 
-  // ── Init ──────────────────────────────────────────────
   init();
   function init() {
     if (token) {
@@ -627,7 +582,6 @@
     loadProduits();
   }
 
-  // ── Toast ─────────────────────────────────────────────
   function showToast(msg) {
     const t = document.getElementById('toast');
     t.textContent = msg;
@@ -635,13 +589,11 @@
     setTimeout(() => t.classList.remove('show'), 2500);
   }
 
-  // ── Overlay ───────────────────────────────────────────
   function fermer(id) { document.getElementById(id).classList.remove('show'); }
   function ouvrirLogin() { document.getElementById('overlay-login').classList.add('show'); }
   function ouvrirPanier() { renderPanier(); document.getElementById('overlay-panier').classList.add('show'); }
   function ouvrirAdmin() { loadStats(); loadAdminProduits(); document.getElementById('overlay-admin').classList.add('show'); }
 
-  // ── Login ─────────────────────────────────────────────
   async function login() {
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
@@ -676,7 +628,6 @@
     document.getElementById('admin-btn').style.display = 'none';
   }
 
-  // ── Produits ──────────────────────────────────────────
   async function loadProduits(cat = 'Tous') {
     const url = cat === 'Tous' ? '/api/produits' : `/api/produits?cat=${encodeURIComponent(cat)}`;
     const res = await fetch(url);
@@ -695,11 +646,7 @@
     liste.forEach(p => {
       const card = document.createElement('div');
       card.className = 'card';
-
-      // Image avec badge catégorie
       card.appendChild(renderCardImage(p));
-
-      // Corps de la carte
       const body = document.createElement('div');
       body.className = 'card-body';
       body.innerHTML = `
@@ -722,14 +669,10 @@
     loadProduits(cat);
   }
 
-  // ── Panier ────────────────────────────────────────────
   function ajouterAuPanier(id, nom, prix) {
     const exist = panier.find(p => p.id === id);
-    if (exist) {
-      exist.qte++;
-    } else {
-      panier.push({ id, nom, prix, qte: 1 });
-    }
+    if (exist) { exist.qte++; }
+    else { panier.push({ id, nom, prix, qte: 1 }); }
     document.getElementById('panier-count').textContent = panier.reduce((s, p) => s + p.qte, 0);
     showToast(`✅ ${nom} ajouté au panier`);
   }
@@ -771,7 +714,6 @@
     div.appendChild(totalDiv);
   }
 
-  // ── Paiement ──────────────────────────────────────────
   function ouvrirPaiement() {
     if (!panier.length) { showToast('⚠️ Panier vide !'); return; }
     const total = panier.reduce((s, p) => s + p.prix * p.qte, 0);
@@ -835,7 +777,6 @@
     fermer('overlay-paiement');
   }
 
-  // ── Admin Tabs ────────────────────────────────────────
   function switchTab(tab, btn) {
     ['stats','ajouter','liste'].forEach(t => document.getElementById('tab-' + t).style.display = 'none');
     document.getElementById('tab-' + tab).style.display = 'block';
@@ -845,7 +786,6 @@
     if (tab === 'stats') loadStats();
   }
 
-  // ── Stats ─────────────────────────────────────────────
   async function loadStats() {
     try {
       const res = await fetch('/api/stats', { headers: { Authorization: 'Bearer ' + token } });
@@ -860,36 +800,48 @@
     } catch(e) {}
   }
 
-  function previewImg(url) {
+  function previewImg(input) {
     const img = document.getElementById('img-preview');
-    if (url) {
-      img.src = url;
+    if (input.files && input.files[0]) {
+      img.src = URL.createObjectURL(input.files[0]);
       img.style.display = 'block';
-      img.onerror = () => { img.style.display = 'none'; };
     } else {
       img.style.display = 'none';
     }
   }
 
-  // ── Ajouter produit ───────────────────────────────────
   async function ajouterProduit() {
-    const nom   = document.getElementById('p-nom').value.trim();
-    const cat   = document.getElementById('p-cat').value;
-    const prix  = parseInt(document.getElementById('p-prix').value);
-    const stock = parseInt(document.getElementById('p-stock').value);
-    const img   = document.getElementById('p-img').value.trim();
-    const msgDiv = document.getElementById('form-msg');
+    const nom     = document.getElementById('p-nom').value.trim();
+    const cat     = document.getElementById('p-cat').value;
+    const prix    = parseInt(document.getElementById('p-prix').value);
+    const stock   = parseInt(document.getElementById('p-stock').value);
+    const imgFile = document.getElementById('p-img').files[0];
+    const msgDiv  = document.getElementById('form-msg');
+    const progress = document.getElementById('upload-progress');
+
     if (!nom || !prix || !stock) {
       msgDiv.innerHTML = '<div class="msg err">Remplis tous les champs obligatoires.</div>';
       return;
     }
+
+    const formData = new FormData();
+    formData.append('nom', nom);
+    formData.append('cat', cat);
+    formData.append('prix', prix);
+    formData.append('stock', stock);
+    if (imgFile) formData.append('image', imgFile);
+
+    progress.style.display = 'block';
+    msgDiv.innerHTML = '';
+
     try {
       const res = await fetch('/api/produits', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
-        body: JSON.stringify({ nom, cat, prix, stock, img })
+        headers: { Authorization: 'Bearer ' + token },
+        body: formData
       });
       const data = await res.json();
+      progress.style.display = 'none';
       if (data.success) {
         msgDiv.innerHTML = '<div class="msg ok">✅ Produit ajouté avec succès !</div>';
         document.getElementById('p-nom').value = '';
@@ -902,11 +854,11 @@
         msgDiv.innerHTML = `<div class="msg err">${data.message}</div>`;
       }
     } catch(e) {
+      progress.style.display = 'none';
       msgDiv.innerHTML = '<div class="msg err">Erreur serveur</div>';
     }
   }
 
-  // ── Liste produits admin ──────────────────────────────
   async function loadAdminProduits() {
     const res = await fetch('/api/produits');
     const data = await res.json();
