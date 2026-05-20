@@ -54,7 +54,7 @@
       margin-left: 4px;
     }
 
-    /* TOAST NOTIFICATION */
+    /* TOAST */
     #toast {
       position: fixed;
       bottom: 24px;
@@ -111,7 +111,46 @@
       transition: transform 0.2s, box-shadow 0.2s;
     }
     .card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
-    .card img { width: 100%; height: 160px; object-fit: cover; }
+
+    /* Image du produit */
+    .card-img-wrap {
+      width: 100%;
+      height: 160px;
+      overflow: hidden;
+      position: relative;
+      background: #f0f0f0;
+    }
+    .card-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.3s ease;
+    }
+    .card:hover .card-img-wrap img { transform: scale(1.05); }
+    /* Placeholder emoji si image absente */
+    .card-img-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 4rem;
+    }
+    /* Badge catégorie sur l'image */
+    .card-badge {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: rgba(26, 107, 47, 0.85);
+      color: white;
+      font-size: 0.7rem;
+      font-weight: 500;
+      padding: 3px 9px;
+      border-radius: 20px;
+      backdrop-filter: blur(4px);
+    }
+
     .card-body { padding: 12px; }
     .card-body h3 { font-size: 1rem; margin-bottom: 4px; }
     .card-body .prix { color: var(--vert); font-weight: 600; font-size: 1rem; }
@@ -129,7 +168,7 @@
     }
     .card-body .btn-ajouter:hover { background: #145224; }
 
-    /* PANIER */
+    /* OVERLAYS */
     .overlay {
       display: none;
       position: fixed;
@@ -158,7 +197,7 @@
       font-size: 1.4rem; cursor: pointer; color: #666;
     }
 
-    /* LOGIN */
+    /* FORMS */
     .form-group { margin-bottom: 14px; }
     .form-group label { display: block; font-size: 0.85rem; margin-bottom: 5px; color: #555; }
     .form-group input, .form-group select, .form-group textarea {
@@ -326,7 +365,6 @@
 </head>
 <body>
 
-<!-- TOAST -->
 <div id="toast">✅ Produit ajouté au panier</div>
 
 <!-- HEADER -->
@@ -385,17 +423,13 @@
 <div class="overlay" id="overlay-paiement">
   <div class="modal">
     <button class="close" onclick="fermer('overlay-paiement')">✕</button>
-
-    <!-- Étape 1 : choisir méthode -->
     <div id="paiement-etape-1">
       <h2>💳 Paiement</h2>
       <p style="color:#666;font-size:0.88rem;margin-bottom:18px">CHOISIR UNE MÉTHODE</p>
-
       <div class="paiement-resume">
         <div class="total-label">Total à payer</div>
         <div class="total-val" id="paiement-total-affiche">—</div>
       </div>
-
       <div class="paiement-methodes">
         <div class="paiement-methode" id="methode-wave" onclick="choisirMethode('wave')">
           <span class="icon">🌊</span>
@@ -408,8 +442,6 @@
           <div class="sublabel">Visa / Mastercard</div>
         </div>
       </div>
-
-      <!-- Formulaire Wave -->
       <div class="paiement-form" id="form-wave">
         <div class="form-group">
           <label>Numéro de téléphone Wave</label>
@@ -418,8 +450,6 @@
         <p style="color:#666;font-size:0.8rem;margin-bottom:12px">📱 Vous recevrez une notification Wave pour confirmer le paiement.</p>
         <button class="btn-primary" onclick="confirmerPaiement()" style="background:#1a9ef0">🌊 Payer via Wave</button>
       </div>
-
-      <!-- Formulaire Carte -->
       <div class="paiement-form" id="form-carte">
         <div class="form-group">
           <label>Titulaire de la carte</label>
@@ -441,11 +471,8 @@
         </div>
         <button class="btn-primary" onclick="confirmerPaiement()">💳 Payer par carte</button>
       </div>
-
       <button onclick="fermer('overlay-paiement')" style="margin-top:12px;width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;background:white;cursor:pointer;color:#666">Annuler</button>
     </div>
-
-    <!-- Étape 2 : confirmation -->
     <div id="paiement-etape-2" style="display:none">
       <div class="success-box">
         <span class="icon">✅</span>
@@ -455,7 +482,6 @@
         <button class="btn-primary" style="margin-top:24px" onclick="finPaiement()">Retour à la boutique</button>
       </div>
     </div>
-
   </div>
 </div>
 
@@ -464,13 +490,11 @@
   <div class="modal">
     <button class="close" onclick="fermer('overlay-admin')">✕</button>
     <h2>📊 Espace Administrateur</h2>
-
     <div class="tab-btns">
       <button class="tab-btn active" onclick="switchTab('stats', this)">📈 Stats</button>
       <button class="tab-btn" onclick="switchTab('ajouter', this)">➕ Ajouter</button>
       <button class="tab-btn" onclick="switchTab('liste', this)">📦 Produits</button>
     </div>
-
     <div id="tab-stats">
       <div class="stats-grid">
         <div class="stat-card"><div class="val" id="stat-ca">—</div><div class="lab">Chiffre d'affaires</div></div>
@@ -479,7 +503,6 @@
         <div class="stat-card"><div class="val" id="stat-users">—</div><div class="lab">Clients</div></div>
       </div>
     </div>
-
     <div id="tab-ajouter" style="display:none">
       <div id="form-msg"></div>
       <div class="form-group">
@@ -505,12 +528,11 @@
       </div>
       <div class="form-group">
         <label>URL de l'image</label>
-        <input type="url" id="p-img" placeholder="https://exemple.com/image.jpg" oninput="previewImg(this.value)">
+        <input type="url" id="p-img" placeholder="https://images.unsplash.com/..." oninput="previewImg(this.value)">
         <img id="img-preview" class="img-preview" alt="Aperçu image">
       </div>
       <button class="btn-primary" onclick="ajouterProduit()">➕ Ajouter le produit</button>
     </div>
-
     <div id="tab-liste" style="display:none">
       <div id="admin-produits-liste"></div>
     </div>
@@ -523,6 +545,76 @@
   let panier = [];
   let tousLesProduits = [];
   let methodePaiement = null;
+
+  // Images de fallback par produit (si le serveur n'a pas d'image)
+  const IMAGES_FALLBACK = {
+    'Aubergine':        'https://images.unsplash.com/photo-1659261200833-ec8761558af7?w=400&q=80',
+    'Chou':             'https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=400&q=80',
+    'Papaye':           'https://images.unsplash.com/photo-1617112848923-cc2234396a8d?w=400&q=80',
+    'Mangue':           'https://images.unsplash.com/photo-1601493700631-2b16ec4b4716?w=400&q=80',
+    'Oignon Rouge':     'https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?w=400&q=80',
+    'Piment Fort':      'https://images.unsplash.com/photo-1583119022894-919a68a3d0e3?w=400&q=80',
+    'Confiture Mangue': 'https://images.unsplash.com/photo-1597528380253-e8b7d384d2e2?w=400&q=80',
+    'Citron':           'https://images.unsplash.com/photo-1590502593747-42a996133562?w=400&q=80',
+    'Bissap séché':     'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=400&q=80',
+    'Poivron':          'https://images.unsplash.com/photo-1526346698789-22fd84314424?w=400&q=80',
+    'Banane Plantain':  'https://images.unsplash.com/photo-1590165482129-1b8b27698780?w=400&q=80',
+    'Confiture Goyave': 'https://images.unsplash.com/photo-1562529536-5b00c4c50d88?w=400&q=80',
+  };
+
+  const EMOJI_NOM = {
+    'Aubergine': '🍆', 'Chou': '🥬', 'Papaye': '🥭', 'Mangue': '🥭',
+    'Oignon Rouge': '🧅', 'Piment Fort': '🌶️', 'Citron': '🍋',
+    'Bissap séché': '🌺', 'Poivron': '🫑', 'Banane Plantain': '🍌',
+    'Confiture Mangue': '🍯', 'Confiture Goyave': '🍯'
+  };
+
+  const BG_CAT = {
+    'Légumes': '#e8f5ec', 'Fruits': '#fff3e0',
+    'Épices': '#fce4ec', 'Confitures': '#f3e5f5'
+  };
+
+  // Résoudre l'image d'un produit : priorité à l'URL stockée, sinon fallback par nom
+  function resolveImg(p) {
+    if (p.img && !p.img.startsWith('/images/')) return p.img;
+    return IMAGES_FALLBACK[p.nom] || null;
+  }
+
+  function renderCardImage(p) {
+    const src = resolveImg(p);
+    const emoji = EMOJI_NOM[p.nom] || '🛒';
+    const bg = BG_CAT[p.cat] || '#f4f4f2';
+    const wrap = document.createElement('div');
+    wrap.className = 'card-img-wrap';
+
+    const badge = document.createElement('span');
+    badge.className = 'card-badge';
+    badge.textContent = p.cat;
+    wrap.appendChild(badge);
+
+    if (src) {
+      const img = document.createElement('img');
+      img.alt = p.nom;
+      img.loading = 'lazy';
+      img.src = src;
+      img.onerror = function() {
+        this.remove();
+        const ph = document.createElement('div');
+        ph.className = 'card-img-placeholder';
+        ph.style.background = bg;
+        ph.textContent = emoji;
+        wrap.insertBefore(ph, badge);
+      };
+      wrap.insertBefore(img, badge);
+    } else {
+      const ph = document.createElement('div');
+      ph.className = 'card-img-placeholder';
+      ph.style.background = bg;
+      ph.textContent = emoji;
+      wrap.insertBefore(ph, badge);
+    }
+    return wrap;
+  }
 
   // ── Init ──────────────────────────────────────────────
   init();
@@ -593,31 +685,6 @@
     renderProduits(tousLesProduits);
   }
 
-  // Emoji par catégorie pour les produits sans image
-  const EMOJI_CAT = {
-    'Légumes': '🥬', 'Fruits': '🥭', 'Épices': '🌶️', 'Confitures': '🍯'
-  };
-  const EMOJI_NOM = {
-    'Aubergine': '🍆', 'Chou': '🥬', 'Papaye': '🥭', 'Mangue': '🥭',
-    'Oignon Rouge': '🧅', 'Piment Fort': '🌶️', 'Citron': '🍋',
-    'Bissap séché': '🌺', 'Poivron': '🫑', 'Banane Plantain': '🍌',
-    'Confiture Mangue': '🍯', 'Confiture Goyave': '🍯'
-  };
-
-  function getImgHTML(p) {
-    if (p.img) {
-      // Image réelle disponible
-      return `<img src="${p.img}" onerror="this.parentNode.replaceWith(makePlaceholder('${EMOJI_NOM[p.nom] || EMOJI_CAT[p.cat] || '🛒'}'))" alt="${p.nom}">`;
-    }
-    // Pas d'image : placeholder coloré avec emoji
-    const emoji = EMOJI_NOM[p.nom] || EMOJI_CAT[p.cat] || '🛒';
-    const couleurs = {
-      'Légumes': '#e8f5ec', 'Fruits': '#fff3e0', 'Épices': '#fce4ec', 'Confitures': '#f3e5f5'
-    };
-    const bg = couleurs[p.cat] || '#f4f4f2';
-    return `<div style="width:100%;height:160px;background:${bg};display:flex;align-items:center;justify-content:center;font-size:4rem">${emoji}</div>`;
-  }
-
   function renderProduits(liste) {
     const container = document.getElementById('produits');
     if (!liste.length) {
@@ -628,18 +695,23 @@
     liste.forEach(p => {
       const card = document.createElement('div');
       card.className = 'card';
-      card.innerHTML = `
-        ${getImgHTML(p)}
-        <div class="card-body">
-          <h3>${p.nom}</h3>
-          <div class="stock">Stock : ${p.stock}</div>
-          <div class="prix">${p.prix.toLocaleString()} FCFA</div>
-          <button class="btn-ajouter">🛒 Ajouter</button>
-        </div>
+
+      // Image avec badge catégorie
+      card.appendChild(renderCardImage(p));
+
+      // Corps de la carte
+      const body = document.createElement('div');
+      body.className = 'card-body';
+      body.innerHTML = `
+        <h3>${p.nom}</h3>
+        <div class="stock">Stock : ${p.stock}</div>
+        <div class="prix">${p.prix.toLocaleString()} FCFA</div>
+        <button class="btn-ajouter">🛒 Ajouter</button>
       `;
-      card.querySelector('.btn-ajouter').addEventListener('click', () => {
+      body.querySelector('.btn-ajouter').addEventListener('click', () => {
         ajouterAuPanier(p._id, p.nom, p.prix);
       });
+      card.appendChild(body);
       container.appendChild(card);
     });
   }
@@ -678,8 +750,6 @@
       return;
     }
     const total = panier.reduce((s, p) => s + p.prix * p.qte, 0);
-
-    // ✅ On construit le DOM sans template string (évite les bugs avec apostrophes dans les noms)
     div.innerHTML = '';
     panier.forEach(p => {
       const row = document.createElement('div');
@@ -695,7 +765,6 @@
       `;
       div.appendChild(row);
     });
-
     const totalDiv = document.createElement('div');
     totalDiv.className = 'panier-total';
     totalDiv.textContent = `Total : ${total.toLocaleString()} FCFA`;
@@ -706,17 +775,13 @@
   function ouvrirPaiement() {
     if (!panier.length) { showToast('⚠️ Panier vide !'); return; }
     const total = panier.reduce((s, p) => s + p.prix * p.qte, 0);
-
-    // Réinitialiser le modal paiement
     document.getElementById('paiement-etape-1').style.display = 'block';
     document.getElementById('paiement-etape-2').style.display = 'none';
     document.getElementById('form-wave').classList.remove('show');
     document.getElementById('form-carte').classList.remove('show');
     document.querySelectorAll('.paiement-methode').forEach(m => m.classList.remove('selected'));
     methodePaiement = null;
-
     document.getElementById('paiement-total-affiche').textContent = total.toLocaleString() + ' FCFA';
-
     fermer('overlay-panier');
     document.getElementById('overlay-paiement').classList.add('show');
   }
@@ -737,8 +802,6 @@
 
   async function confirmerPaiement() {
     if (!methodePaiement) { showToast('⚠️ Choisissez une méthode de paiement'); return; }
-
-    // Validation basique
     if (methodePaiement === 'wave') {
       const tel = document.getElementById('wave-tel').value.trim();
       if (!tel) { showToast('⚠️ Entrez votre numéro Wave'); return; }
@@ -747,8 +810,6 @@
       const num = document.getElementById('carte-num').value.trim();
       if (!nom || !num) { showToast('⚠️ Remplissez les infos de carte'); return; }
     }
-
-    // Envoyer la commande à l'API
     try {
       const total = panier.reduce((s, p) => s + p.prix * p.qte, 0);
       await fetch('/api/commandes', {
@@ -763,11 +824,7 @@
           methodePaiement
         })
       });
-    } catch(e) {
-      // On continue quand même — l'affichage succès s'affiche
-    }
-
-    // Afficher succès
+    } catch(e) {}
     document.getElementById('paiement-etape-1').style.display = 'none';
     document.getElementById('paiement-etape-2').style.display = 'block';
   }
@@ -803,7 +860,6 @@
     } catch(e) {}
   }
 
-  // ── Aperçu image ──────────────────────────────────────
   function previewImg(url) {
     const img = document.getElementById('img-preview');
     if (url) {
@@ -823,12 +879,10 @@
     const stock = parseInt(document.getElementById('p-stock').value);
     const img   = document.getElementById('p-img').value.trim();
     const msgDiv = document.getElementById('form-msg');
-
     if (!nom || !prix || !stock) {
       msgDiv.innerHTML = '<div class="msg err">Remplis tous les champs obligatoires.</div>';
       return;
     }
-
     try {
       const res = await fetch('/api/produits', {
         method: 'POST',
@@ -859,17 +913,21 @@
     const liste = data.data || [];
     const div = document.getElementById('admin-produits-liste');
     if (!liste.length) { div.innerHTML = '<p style="color:#888">Aucun produit.</p>'; return; }
-    div.innerHTML = liste.map(p => `
-      <div class="produit-list-item">
-        <img src="${p.img || 'https://placehold.co/100?text=' + encodeURIComponent(p.nom)}"
-             onerror="this.src='https://placehold.co/100?text=img'" alt="${p.nom}">
+    div.innerHTML = '';
+    liste.forEach(p => {
+      const src = resolveImg(p) || 'https://placehold.co/100?text=' + encodeURIComponent(p.nom);
+      const item = document.createElement('div');
+      item.className = 'produit-list-item';
+      item.innerHTML = `
+        <img src="${src}" onerror="this.src='https://placehold.co/100?text=img'" alt="${p.nom}">
         <div class="info">
           <strong>${p.nom}</strong><br>
           <span style="color:#888">${p.prix.toLocaleString()} FCFA — Stock: ${p.stock}</span>
         </div>
         <button class="btn-danger" onclick="supprimerProduit('${p._id}', this)">🗑</button>
-      </div>
-    `).join('');
+      `;
+      div.appendChild(item);
+    });
   }
 
   async function supprimerProduit(id, btn) {
