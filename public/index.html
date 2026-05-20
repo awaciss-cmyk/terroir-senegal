@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Terroir Sénégal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --vert: #1a6b2f;
+      --vert-clair: #e8f5ec;
+      --or: #c8860a;
+      --rouge: #c0392b;
+      --blanc: #fff;
+      --gris: #f4f4f2;
+      --texte: #1a1a1a;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--gris); color: var(--texte); }
+
+    /* HEADER */
+    header {
+      background: var(--vert);
+      color: white;
+      padding: 14px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+    }
+    header h1 { font-family: 'Playfair Display', serif; font-size: 1.5rem; }
+    .header-btns { display: flex; gap: 10px; align-items: center; }
+    .header-btns button {
+      background: rgba(255,255,255,0.15);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.3);
+      padding: 7px 14px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: background 0.2s;
+    }
+    .header-btns button:hover { background: rgba(255,255,255,0.3); }
+    #panier-btn { position: relative; }
+    #panier-count {
+      background: var(--or);
+      color: white;
+      border-radius: 50%;
+      padding: 1px 6px;
+      font-size: 0.75rem;
+      margin-left: 4px;
+    }
+
+    /* TOAST */
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--vert);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 30px;
+      font-size: 0.9rem;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+      z-index: 9999;
+      transition: transform 0.3s ease;
+      pointer-events: none;
+    }
+    #toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* FILTRES */
+    .filtres {
+      display: flex;
+      gap: 10px;
+      padding: 16px 24px;
+      overflow-x: auto;
+      background: white;
+      border-bottom: 1px solid #ddd;
+    }
+    .filtres button {
+      background: var(--gris);
+      border: none;
+      padding: 7px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .filtres button.active, .filtres button:hover {
+      background: var(--vert);
+      color: white;
+    }
+
+    /* PRODUITS */
+    .container {
+      padding: 24px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 18px;
+    }
+    .card {
+      background: white;
+      border-radius: 14px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
+
+    /* Image du produit */
+    .card-img-wrap {
+      width: 100%;
+      height: 160px;
+      overflow: hidden;
+      position: relative;
+      background: #f0f0f0;
+    }
+    .card-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.3s ease;
+    }
+    .card:hover .card-img-wrap img { transform: scale(1.05); }
+    /* Placeholder emoji si image absente */
+    .card-img-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 4rem;
+    }
+    /* Badge catégorie sur l'image */
+    .card-badge {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: rgba(26, 107, 47, 0.85);
+      color: white;
+      font-size: 0.7rem;
+      font-weight: 500;
+      padding: 3px 9px;
+      border-radius: 20px;
+      backdrop-filter: blur(4px);
+    }
+
+    .card-body { padding: 12px; }
+    .card-body h3 { font-size: 1rem; margin-bottom: 4px; }
+    .card-body .prix { color: var(--vert); font-weight: 600; font-size: 1rem; }
+    .card-body .stock { font-size: 0.78rem; color: #888; margin-bottom: 8px; }
+    .card-body .btn-ajouter {
+      background: var(--vert);
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+      font-size: 0.9rem;
+      transition: background 0.2s;
+    }
+    .card-body .btn-ajouter:hover { background: #145224; }
+
+    /* OVERLAYS */
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 200;
+      justify-content: center;
+      align-items: center;
+    }
+    .overlay.show { display: flex; }
+    .modal {
+      background: white;
+      border-radius: 16px;
+      padding: 28px;
+      width: 90%;
+      max-width: 480px;
+      max-height: 85vh;
+      overflow-y: auto;
+      position: relative;
+    }
+    .modal h2 { font-family: 'Playfair Display', serif; margin-bottom: 18px; }
+    .modal .close {
+      position: absolute;
+      top: 14px; right: 18px;
+      background: none; border: none;
+      font-size: 1.4rem; cursor: pointer; color: #666;
+    }
+
+    /* FORMS */
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; font-size: 0.85rem; margin-bottom: 5px; color: #555; }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-family: inherit;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      outline: none;
+      border-color: var(--vert);
+    }
+    .btn-primary {
+      background: var(--vert);
+      color: white;
+      border: none;
+      padding: 11px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      width: 100%;
+      transition: background 0.2s;
+    }
+    .btn-primary:hover { background: #145224; }
+    .btn-danger {
+      background: var(--rouge);
+      color: white;
+      border: none;
+      padding: 7px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+
+    /* PANIER ITEMS */
+    .panier-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+      font-size: 0.9rem;
+      gap: 8px;
+    }
+    .panier-item .item-nom { flex: 1; }
+    .panier-item .item-prix { font-weight: 600; color: var(--vert); white-space: nowrap; }
+    .panier-item .item-qte {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .panier-item .item-qte button {
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      border: 1px solid #ddd;
+      background: white;
+      cursor: pointer;
+      font-size: 0.9rem;
+      display: flex; align-items: center; justify-content: center;
+      line-height: 1;
+    }
+    .panier-total {
+      font-weight: 700;
+      font-size: 1.15rem;
+      text-align: right;
+      margin: 16px 0 8px;
+      color: var(--vert);
+      padding: 10px;
+      background: var(--vert-clair);
+      border-radius: 8px;
+    }
+
+    /* PAIEMENT */
+    .paiement-methodes {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .paiement-methode {
+      border: 2px solid #eee;
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .paiement-methode:hover { border-color: var(--vert); }
+    .paiement-methode.selected { border-color: var(--vert); background: var(--vert-clair); }
+    .paiement-methode .icon { font-size: 2rem; display: block; margin-bottom: 6px; }
+    .paiement-methode .label { font-size: 0.85rem; font-weight: 600; }
+    .paiement-methode .sublabel { font-size: 0.75rem; color: #888; }
+    .paiement-form { display: none; }
+    .paiement-form.show { display: block; }
+    .paiement-resume {
+      background: var(--vert-clair);
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 16px;
+      font-size: 0.9rem;
+    }
+    .paiement-resume .total-label { color: #555; }
+    .paiement-resume .total-val { font-size: 1.3rem; font-weight: 700; color: var(--vert); }
+    .success-box {
+      text-align: center;
+      padding: 30px 20px;
+    }
+    .success-box .icon { font-size: 3.5rem; display: block; margin-bottom: 12px; }
+    .success-box h3 { font-family: 'Playfair Display', serif; font-size: 1.4rem; margin-bottom: 8px; }
+    .success-box p { color: #666; font-size: 0.9rem; }
+
+    /* ADMIN */
+    .admin-section { margin-bottom: 22px; }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .stat-card {
+      background: var(--vert-clair);
+      border-radius: 10px;
+      padding: 14px;
+      text-align: center;
+    }
+    .stat-card .val { font-size: 1.5rem; font-weight: 700; color: var(--vert); }
+    .stat-card .lab { font-size: 0.8rem; color: #555; }
+    .img-preview {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-top: 8px;
+      display: none;
+      border: 1px solid #ddd;
+    }
+    .tab-btns { display: flex; gap: 8px; margin-bottom: 16px; }
+    .tab-btn {
+      flex: 1;
+      padding: 8px;
+      border: 1px solid var(--vert);
+      border-radius: 8px;
+      background: white;
+      color: var(--vert);
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+    .tab-btn.active { background: var(--vert); color: white; }
+    .produit-list-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid #eee;
+      font-size: 0.88rem;
+    }
+    .produit-list-item img { width: 44px; height: 44px; object-fit: cover; border-radius: 6px; }
+    .produit-list-item .info { flex: 1; }
+    .msg { padding: 10px; border-radius: 8px; font-size: 0.88rem; margin-bottom: 10px; text-align: center; }
+    .msg.ok { background: #d4edda; color: #155724; }
+    .msg.err { background: #f8d7da; color: #721c24; }
+  </style>
+</head>
+<body>
+
+<div id="toast">✅ Produit ajouté au panier</div>
+
+<!-- HEADER -->
+<header>
+  <h1>🌿 Terroir Sénégal</h1>
+  <div class="header-btns">
+    <button onclick="ouvrirAdmin()" id="admin-btn" style="display:none">📊 Stats Admin</button>
+    <button onclick="ouvrirLogin()" id="login-btn">🔑 Connexion</button>
+    <button onclick="deconnexion()" id="logout-btn" style="display:none">Déconnexion</button>
+    <button id="panier-btn" onclick="ouvrirPanier()">🛒 Panier <span id="panier-count">0</span></button>
+  </div>
+</header>
+
+<!-- FILTRES -->
+<div class="filtres">
+  <button class="active" onclick="filtrer('Tous', this)">Tout</button>
+  <button onclick="filtrer('Légumes', this)">🥬 Légumes</button>
+  <button onclick="filtrer('Fruits', this)">🥭 Fruits</button>
+  <button onclick="filtrer('Épices', this)">🌶️ Épices</button>
+  <button onclick="filtrer('Confitures', this)">🍯 Confitures</button>
+</div>
+
+<!-- PRODUITS -->
+<div class="container" id="produits"></div>
+
+<!-- OVERLAY LOGIN -->
+<div class="overlay" id="overlay-login">
+  <div class="modal">
+    <button class="close" onclick="fermer('overlay-login')">✕</button>
+    <h2>🔑 Connexion</h2>
+    <div id="login-msg"></div>
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" id="email" placeholder="admin@terroir.sn">
+    </div>
+    <div class="form-group">
+      <label>Mot de passe</label>
+      <input type="password" id="password" placeholder="••••••••">
+    </div>
+    <button class="btn-primary" onclick="login()">Se connecter</button>
+    <p style="margin-top:10px;text-align:center;color:#888;font-size:0.8rem">Annuler</p>
+  </div>
+</div>
+
+<!-- OVERLAY PANIER -->
+<div class="overlay" id="overlay-panier">
+  <div class="modal">
+    <button class="close" onclick="fermer('overlay-panier')">✕</button>
+    <h2>🛒 Mon Panier</h2>
+    <div id="panier-contenu"></div>
+    <button class="btn-primary" onclick="ouvrirPaiement()" id="btn-commander">💳 Commander & Payer</button>
+  </div>
+</div>
+
+<!-- OVERLAY PAIEMENT -->
+<div class="overlay" id="overlay-paiement">
+  <div class="modal">
+    <button class="close" onclick="fermer('overlay-paiement')">✕</button>
+    <div id="paiement-etape-1">
+      <h2>💳 Paiement</h2>
+      <p style="color:#666;font-size:0.88rem;margin-bottom:18px">CHOISIR UNE MÉTHODE</p>
+      <div class="paiement-resume">
+        <div class="total-label">Total à payer</div>
+        <div class="total-val" id="paiement-total-affiche">—</div>
+      </div>
+      <div class="paiement-methodes">
+        <div class="paiement-methode" id="methode-wave" onclick="choisirMethode('wave')">
+          <span class="icon">🌊</span>
+          <div class="label">Wave</div>
+          <div class="sublabel">Paiement mobile instantané</div>
+        </div>
+        <div class="paiement-methode" id="methode-carte" onclick="choisirMethode('carte')">
+          <span class="icon">💳</span>
+          <div class="label">Carte Bancaire</div>
+          <div class="sublabel">Visa / Mastercard</div>
+        </div>
+      </div>
+      <div class="paiement-form" id="form-wave">
+        <div class="form-group">
+          <label>Numéro de téléphone Wave</label>
+          <input type="tel" id="wave-tel" placeholder="77 000 00 00">
+        </div>
+        <p style="color:#666;font-size:0.8rem;margin-bottom:12px">📱 Vous recevrez une notification Wave pour confirmer le paiement.</p>
+        <button class="btn-primary" onclick="confirmerPaiement()" style="background:#1a9ef0">🌊 Payer via Wave</button>
+      </div>
+      <div class="paiement-form" id="form-carte">
+        <div class="form-group">
+          <label>Titulaire de la carte</label>
+          <input type="text" id="carte-nom" placeholder="MAMADOU DIALLO">
+        </div>
+        <div class="form-group">
+          <label>Numéro de carte</label>
+          <input type="text" id="carte-num" placeholder="0000 0000 0000 0000" maxlength="19" oninput="formatCarte(this)">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="form-group">
+            <label>Date d'expiration</label>
+            <input type="text" id="carte-exp" placeholder="MM/AA" maxlength="5">
+          </div>
+          <div class="form-group">
+            <label>CVV</label>
+            <input type="text" id="carte-cvv" placeholder="123" maxlength="3">
+          </div>
+        </div>
+        <button class="btn-primary" onclick="confirmerPaiement()">💳 Payer par carte</button>
+      </div>
+      <button onclick="fermer('overlay-paiement')" style="margin-top:12px;width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;background:white;cursor:pointer;color:#666">Annuler</button>
+    </div>
+    <div id="paiement-etape-2" style="display:none">
+      <div class="success-box">
+        <span class="icon">✅</span>
+        <h3>Paiement confirmé !</h3>
+        <p>Un reçu vous sera envoyé par SMS.</p>
+        <p style="margin-top:6px;font-size:0.85rem;color:#aaa">Merci pour votre commande 🙏</p>
+        <button class="btn-primary" style="margin-top:24px" onclick="finPaiement()">Retour à la boutique</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- OVERLAY ADMIN -->
+<div class="overlay" id="overlay-admin">
+  <div class="modal">
+    <button class="close" onclick="fermer('overlay-admin')">✕</button>
+    <h2>📊 Espace Administrateur</h2>
+    <div class="tab-btns">
+      <button class="tab-btn active" onclick="switchTab('stats', this)">📈 Stats</button>
+      <button class="tab-btn" onclick="switchTab('ajouter', this)">➕ Ajouter</button>
+      <button class="tab-btn" onclick="switchTab('liste', this)">📦 Produits</button>
+    </div>
+    <div id="tab-stats">
+      <div class="stats-grid">
+        <div class="stat-card"><div class="val" id="stat-ca">—</div><div class="lab">Chiffre d'affaires</div></div>
+        <div class="stat-card"><div class="val" id="stat-cmd">—</div><div class="lab">Commandes</div></div>
+        <div class="stat-card"><div class="val" id="stat-prod">—</div><div class="lab">Produits actifs</div></div>
+        <div class="stat-card"><div class="val" id="stat-users">—</div><div class="lab">Clients</div></div>
+      </div>
+    </div>
+    <div id="tab-ajouter" style="display:none">
+      <div id="form-msg"></div>
+      <div class="form-group">
+        <label>Nom du produit</label>
+        <input type="text" id="p-nom" placeholder="Ex: Mangue Kent">
+      </div>
+      <div class="form-group">
+        <label>Catégorie</label>
+        <select id="p-cat">
+          <option>Légumes</option>
+          <option>Fruits</option>
+          <option>Épices</option>
+          <option>Confitures</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Prix (FCFA)</label>
+        <input type="number" id="p-prix" placeholder="500">
+      </div>
+      <div class="form-group">
+        <label>Stock</label>
+        <input type="number" id="p-stock" placeholder="50">
+      </div>
+      <div class="form-group">
+        <label>URL de l'image</label>
+        <input type="url" id="p-img" placeholder="https://images.unsplash.com/..." oninput="previewImg(this.value)">
+        <img id="img-preview" class="img-preview" alt="Aperçu image">
+      </div>
+      <button class="btn-primary" onclick="ajouterProduit()">➕ Ajouter le produit</button>
+    </div>
+    <div id="tab-liste" style="display:none">
+      <div id="admin-produits-liste"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let token = localStorage.getItem('token') || '';
+  let userRole = localStorage.getItem('role') || '';
+  let panier = [];
+  let tousLesProduits = [];
+  let methodePaiement = null;
+
+  // Images de fallback par produit (si le serveur n'a pas d'image)
+  const IMAGES_FALLBACK = {
+    'Aubergine':        'https://images.unsplash.com/photo-1659261200833-ec8761558af7?w=400&q=80',
+    'Chou':             'https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=400&q=80',
+    'Papaye':           'https://images.unsplash.com/photo-1617112848923-cc2234396a8d?w=400&q=80',
+    'Mangue':           'https://images.unsplash.com/photo-1601493700631-2b16ec4b4716?w=400&q=80',
+    'Oignon Rouge':     'https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?w=400&q=80',
+    'Piment Fort':      'https://images.unsplash.com/photo-1583119022894-919a68a3d0e3?w=400&q=80',
+    'Confiture Mangue': 'https://images.unsplash.com/photo-1597528380253-e8b7d384d2e2?w=400&q=80',
+    'Citron':           'https://images.unsplash.com/photo-1590502593747-42a996133562?w=400&q=80',
+    'Bissap séché':     'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=400&q=80',
+    'Poivron':          'https://images.unsplash.com/photo-1526346698789-22fd84314424?w=400&q=80',
+    'Banane Plantain':  'https://images.unsplash.com/photo-1590165482129-1b8b27698780?w=400&q=80',
+    'Confiture Goyave': 'https://images.unsplash.com/photo-1562529536-5b00c4c50d88?w=400&q=80',
+  };
+
+  const EMOJI_NOM = {
+    'Aubergine': '🍆', 'Chou': '🥬', 'Papaye': '🥭', 'Mangue': '🥭',
+    'Oignon Rouge': '🧅', 'Piment Fort': '🌶️', 'Citron': '🍋',
+    'Bissap séché': '🌺', 'Poivron': '🫑', 'Banane Plantain': '🍌',
+    'Confiture Mangue': '🍯', 'Confiture Goyave': '🍯'
+  };
+
+  const BG_CAT = {
+    'Légumes': '#e8f5ec', 'Fruits': '#fff3e0',
+    'Épices': '#fce4ec', 'Confitures': '#f3e5f5'
+  };
+
+  // Résoudre l'image d'un produit : priorité à l'URL stockée, sinon fallback par nom
+  function resolveImg(p) {
+    if (p.img && !p.img.startsWith('/images/')) return p.img;
+    return IMAGES_FALLBACK[p.nom] || null;
+  }
+
+  function renderCardImage(p) {
+    const src = resolveImg(p);
+    const emoji = EMOJI_NOM[p.nom] || '🛒';
+    const bg = BG_CAT[p.cat] || '#f4f4f2';
+    const wrap = document.createElement('div');
+    wrap.className = 'card-img-wrap';
+
+    const badge = document.createElement('span');
+    badge.className = 'card-badge';
+    badge.textContent = p.cat;
+    wrap.appendChild(badge);
+
+    if (src) {
+      const img = document.createElement('img');
+      img.alt = p.nom;
+      img.loading = 'lazy';
+      img.src = src;
+      img.onerror = function() {
+        this.remove();
+        const ph = document.createElement('div');
+        ph.className = 'card-img-placeholder';
+        ph.style.background = bg;
+        ph.textContent = emoji;
+        wrap.insertBefore(ph, badge);
+      };
+      wrap.insertBefore(img, badge);
+    } else {
+      const ph = document.createElement('div');
+      ph.className = 'card-img-placeholder';
+      ph.style.background = bg;
+      ph.textContent = emoji;
+      wrap.insertBefore(ph, badge);
+    }
+    return wrap;
+  }
+
+  // ── Init ──────────────────────────────────────────────
+  init();
+  function init() {
+    if (token) {
+      document.getElementById('login-btn').style.display = 'none';
+      document.getElementById('logout-btn').style.display = 'inline-block';
+      if (userRole === 'admin') document.getElementById('admin-btn').style.display = 'inline-block';
+    }
+    loadProduits();
+  }
+
+  // ── Toast ─────────────────────────────────────────────
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  }
+
+  // ── Overlay ───────────────────────────────────────────
+  function fermer(id) { document.getElementById(id).classList.remove('show'); }
+  function ouvrirLogin() { document.getElementById('overlay-login').classList.add('show'); }
+  function ouvrirPanier() { renderPanier(); document.getElementById('overlay-panier').classList.add('show'); }
+  function ouvrirAdmin() { loadStats(); loadAdminProduits(); document.getElementById('overlay-admin').classList.add('show'); }
+
+  // ── Login ─────────────────────────────────────────────
+  async function login() {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+      if (data.success) {
+        token = data.token;
+        userRole = data.data?.role || '';
+        localStorage.setItem('token', token);
+        localStorage.setItem('role', userRole);
+        fermer('overlay-login');
+        init();
+      } else {
+        document.getElementById('login-msg').innerHTML = `<div class="msg err">${data.message}</div>`;
+      }
+    } catch (e) {
+      document.getElementById('login-msg').innerHTML = `<div class="msg err">Erreur de connexion</div>`;
+    }
+  }
+
+  function deconnexion() {
+    token = ''; userRole = '';
+    localStorage.removeItem('token');
+    localStorage.removeItem('role');
+    document.getElementById('login-btn').style.display = 'inline-block';
+    document.getElementById('logout-btn').style.display = 'none';
+    document.getElementById('admin-btn').style.display = 'none';
+  }
+
+  // ── Produits ──────────────────────────────────────────
+  async function loadProduits(cat = 'Tous') {
+    const url = cat === 'Tous' ? '/api/produits' : `/api/produits?cat=${encodeURIComponent(cat)}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    tousLesProduits = data.data || data || [];
+    renderProduits(tousLesProduits);
+  }
+
+  function renderProduits(liste) {
+    const container = document.getElementById('produits');
+    if (!liste.length) {
+      container.innerHTML = '<p style="text-align:center;padding:40px;color:#888">Aucun produit trouvé.</p>';
+      return;
+    }
+    container.innerHTML = '';
+    liste.forEach(p => {
+      const card = document.createElement('div');
+      card.className = 'card';
+
+      // Image avec badge catégorie
+      card.appendChild(renderCardImage(p));
+
+      // Corps de la carte
+      const body = document.createElement('div');
+      body.className = 'card-body';
+      body.innerHTML = `
+        <h3>${p.nom}</h3>
+        <div class="stock">Stock : ${p.stock}</div>
+        <div class="prix">${p.prix.toLocaleString()} FCFA</div>
+        <button class="btn-ajouter">🛒 Ajouter</button>
+      `;
+      body.querySelector('.btn-ajouter').addEventListener('click', () => {
+        ajouterAuPanier(p._id, p.nom, p.prix);
+      });
+      card.appendChild(body);
+      container.appendChild(card);
+    });
+  }
+
+  function filtrer(cat, btn) {
+    document.querySelectorAll('.filtres button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    loadProduits(cat);
+  }
+
+  // ── Panier ────────────────────────────────────────────
+  function ajouterAuPanier(id, nom, prix) {
+    const exist = panier.find(p => p.id === id);
+    if (exist) {
+      exist.qte++;
+    } else {
+      panier.push({ id, nom, prix, qte: 1 });
+    }
+    document.getElementById('panier-count').textContent = panier.reduce((s, p) => s + p.qte, 0);
+    showToast(`✅ ${nom} ajouté au panier`);
+  }
+
+  function changerQte(id, delta) {
+    const item = panier.find(p => p.id === id);
+    if (!item) return;
+    item.qte += delta;
+    if (item.qte <= 0) panier = panier.filter(p => p.id !== id);
+    document.getElementById('panier-count').textContent = panier.reduce((s, p) => s + p.qte, 0);
+    renderPanier();
+  }
+
+  function renderPanier() {
+    const div = document.getElementById('panier-contenu');
+    if (!panier.length) {
+      div.innerHTML = '<p style="color:#888;text-align:center;padding:20px">Panier vide</p>';
+      return;
+    }
+    const total = panier.reduce((s, p) => s + p.prix * p.qte, 0);
+    div.innerHTML = '';
+    panier.forEach(p => {
+      const row = document.createElement('div');
+      row.className = 'panier-item';
+      row.innerHTML = `
+        <span class="item-nom">${p.nom}</span>
+        <div class="item-qte">
+          <button onclick="changerQte('${p.id}', -1)">−</button>
+          <span>${p.qte}</span>
+          <button onclick="changerQte('${p.id}', 1)">+</button>
+        </div>
+        <span class="item-prix">${(p.prix * p.qte).toLocaleString()} FCFA</span>
+      `;
+      div.appendChild(row);
+    });
+    const totalDiv = document.createElement('div');
+    totalDiv.className = 'panier-total';
+    totalDiv.textContent = `Total : ${total.toLocaleString()} FCFA`;
+    div.appendChild(totalDiv);
+  }
+
+  // ── Paiement ──────────────────────────────────────────
+  function ouvrirPaiement() {
+    if (!panier.length) { showToast('⚠️ Panier vide !'); return; }
+    const total = panier.reduce((s, p) => s + p.prix * p.qte, 0);
+    document.getElementById('paiement-etape-1').style.display = 'block';
+    document.getElementById('paiement-etape-2').style.display = 'none';
+    document.getElementById('form-wave').classList.remove('show');
+    document.getElementById('form-carte').classList.remove('show');
+    document.querySelectorAll('.paiement-methode').forEach(m => m.classList.remove('selected'));
+    methodePaiement = null;
+    document.getElementById('paiement-total-affiche').textContent = total.toLocaleString() + ' FCFA';
+    fermer('overlay-panier');
+    document.getElementById('overlay-paiement').classList.add('show');
+  }
+
+  function choisirMethode(methode) {
+    methodePaiement = methode;
+    document.querySelectorAll('.paiement-methode').forEach(m => m.classList.remove('selected'));
+    document.getElementById('methode-' + methode).classList.add('selected');
+    document.getElementById('form-wave').classList.remove('show');
+    document.getElementById('form-carte').classList.remove('show');
+    document.getElementById('form-' + methode).classList.add('show');
+  }
+
+  function formatCarte(input) {
+    let v = input.value.replace(/\D/g, '').substring(0, 16);
+    input.value = v.replace(/(.{4})/g, '$1 ').trim();
+  }
+
+  async function confirmerPaiement() {
+    if (!methodePaiement) { showToast('⚠️ Choisissez une méthode de paiement'); return; }
+    if (methodePaiement === 'wave') {
+      const tel = document.getElementById('wave-tel').value.trim();
+      if (!tel) { showToast('⚠️ Entrez votre numéro Wave'); return; }
+    } else {
+      const nom = document.getElementById('carte-nom').value.trim();
+      const num = document.getElementById('carte-num').value.trim();
+      if (!nom || !num) { showToast('⚠️ Remplissez les infos de carte'); return; }
+    }
+    try {
+      const total = panier.reduce((s, p) => s + p.prix * p.qte, 0);
+      await fetch('/api/commandes', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: 'Bearer ' + token } : {})
+        },
+        body: JSON.stringify({
+          produits: panier.map(p => ({ produit: p.id, quantite: p.qte, prix: p.prix })),
+          total,
+          methodePaiement
+        })
+      });
+    } catch(e) {}
+    document.getElementById('paiement-etape-1').style.display = 'none';
+    document.getElementById('paiement-etape-2').style.display = 'block';
+  }
+
+  function finPaiement() {
+    panier = [];
+    document.getElementById('panier-count').textContent = 0;
+    fermer('overlay-paiement');
+  }
+
+  // ── Admin Tabs ────────────────────────────────────────
+  function switchTab(tab, btn) {
+    ['stats','ajouter','liste'].forEach(t => document.getElementById('tab-' + t).style.display = 'none');
+    document.getElementById('tab-' + tab).style.display = 'block';
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    if (tab === 'liste') loadAdminProduits();
+    if (tab === 'stats') loadStats();
+  }
+
+  // ── Stats ─────────────────────────────────────────────
+  async function loadStats() {
+    try {
+      const res = await fetch('/api/stats', { headers: { Authorization: 'Bearer ' + token } });
+      const data = await res.json();
+      if (data.success) {
+        const s = data.data;
+        document.getElementById('stat-ca').textContent = (s.chiffreAffaires || 0).toLocaleString() + ' F';
+        document.getElementById('stat-cmd').textContent = s.totalCommandes || 0;
+        document.getElementById('stat-prod').textContent = s.totalProduits || 0;
+        document.getElementById('stat-users').textContent = s.totalUtilisateurs || 0;
+      }
+    } catch(e) {}
+  }
+
+  function previewImg(url) {
+    const img = document.getElementById('img-preview');
+    if (url) {
+      img.src = url;
+      img.style.display = 'block';
+      img.onerror = () => { img.style.display = 'none'; };
+    } else {
+      img.style.display = 'none';
+    }
+  }
+
+  // ── Ajouter produit ───────────────────────────────────
+  async function ajouterProduit() {
+    const nom   = document.getElementById('p-nom').value.trim();
+    const cat   = document.getElementById('p-cat').value;
+    const prix  = parseInt(document.getElementById('p-prix').value);
+    const stock = parseInt(document.getElementById('p-stock').value);
+    const img   = document.getElementById('p-img').value.trim();
+    const msgDiv = document.getElementById('form-msg');
+    if (!nom || !prix || !stock) {
+      msgDiv.innerHTML = '<div class="msg err">Remplis tous les champs obligatoires.</div>';
+      return;
+    }
+    try {
+      const res = await fetch('/api/produits', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+        body: JSON.stringify({ nom, cat, prix, stock, img })
+      });
+      const data = await res.json();
+      if (data.success) {
+        msgDiv.innerHTML = '<div class="msg ok">✅ Produit ajouté avec succès !</div>';
+        document.getElementById('p-nom').value = '';
+        document.getElementById('p-prix').value = '';
+        document.getElementById('p-stock').value = '';
+        document.getElementById('p-img').value = '';
+        document.getElementById('img-preview').style.display = 'none';
+        loadProduits();
+      } else {
+        msgDiv.innerHTML = `<div class="msg err">${data.message}</div>`;
+      }
+    } catch(e) {
+      msgDiv.innerHTML = '<div class="msg err">Erreur serveur</div>';
+    }
+  }
+
+  // ── Liste produits admin ──────────────────────────────
+  async function loadAdminProduits() {
+    const res = await fetch('/api/produits');
+    const data = await res.json();
+    const liste = data.data || [];
+    const div = document.getElementById('admin-produits-liste');
+    if (!liste.length) { div.innerHTML = '<p style="color:#888">Aucun produit.</p>'; return; }
+    div.innerHTML = '';
+    liste.forEach(p => {
+      const src = resolveImg(p) || 'https://placehold.co/100?text=' + encodeURIComponent(p.nom);
+      const item = document.createElement('div');
+      item.className = 'produit-list-item';
+      item.innerHTML = `
+        <img src="${src}" onerror="this.src='https://placehold.co/100?text=img'" alt="${p.nom}">
+        <div class="info">
+          <strong>${p.nom}</strong><br>
+          <span style="color:#888">${p.prix.toLocaleString()} FCFA — Stock: ${p.stock}</span>
+        </div>
+        <button class="btn-danger" onclick="supprimerProduit('${p._id}', this)">🗑</button>
+      `;
+      div.appendChild(item);
+    });
+  }
+
+  async function supprimerProduit(id, btn) {
+    if (!confirm('Supprimer ce produit ?')) return;
+    const res = await fetch('/api/produits/' + id, {
+      method: 'DELETE',
+      headers: { Authorization: 'Bearer ' + token }
+    });
+    const data = await res.json();
+    if (data.success) { loadAdminProduits(); loadProduits(); }
+    else alert(data.message);
+  }
+</script>
+</body>
+</html>
