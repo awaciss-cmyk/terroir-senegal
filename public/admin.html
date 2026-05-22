@@ -6,7 +6,7 @@
     <title>Terroir Sénégal - Panel Admin</title>
     <style>
         :root {
-            --primary: #e67e22; /* Couleur orange/marron rappelant le terroir */
+            --primary: #e67e22;
             --dark: #2c3e50;
             --light: #f8f9fa;
             --danger: #e74c3c;
@@ -14,16 +14,13 @@
             --grey: #bdc3c7;
         }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             background-color: var(--light);
             margin: 0;
             padding: 20px;
             color: var(--dark);
         }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+        .container { max-width: 1200px; margin: 0 auto; }
         header {
             display: flex;
             justify-content: space-between;
@@ -40,29 +37,22 @@
             border-radius: 4px;
             cursor: pointer;
         }
-        
-        /* Grille : Formulaire à gauche (1/3), Liste à droite (2/3) */
         .admin-grid {
             display: grid;
             grid-template-columns: 1fr 2fr;
             gap: 30px;
         }
-        @media (max-width: 768px) {
-            .admin-grid { grid-template-columns: 1fr; }
-        }
-
+        @media (max-width: 768px) { .admin-grid { grid-template-columns: 1fr; } }
         .card {
             background: white;
             padding: 25px;
             border-radius: 8px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
-        h2 { margin-top: 0; color: var(--dark); border-bottom: 1px solid #eee; padding-bottom: 10px; }
-
-        /* Formulaire stylisé */
+        h2 { margin-top: 0; border-bottom: 1px solid #eee; padding-bottom: 10px; }
         .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px; }
-        input[type="text"], input[type="number"], textarea, input[type="file"] {
+        input, select, textarea {
             width: 100%;
             padding: 10px;
             border: 1px solid var(--grey);
@@ -70,7 +60,6 @@
             box-sizing: border-box;
             font-size: 14px;
         }
-        textarea { resize: vertical; }
         button.btn-submit {
             background-color: var(--primary);
             color: white;
@@ -81,14 +70,11 @@
             font-size: 16px;
             width: 100%;
             font-weight: bold;
-            transition: background 0.2s;
         }
         button.btn-submit:hover { background-color: #d35400; }
-
-        /* Grille des produits */
         .products-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
             gap: 20px;
         }
         .product-card {
@@ -100,17 +86,17 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
         }
         .product-card img {
             width: 100%;
-            height: 140px;
+            height: 120px;
             object-fit: cover;
             border-radius: 4px;
             margin-bottom: 10px;
         }
         .product-card h4 { margin: 5px 0; font-size: 16px; }
-        .product-card .price { color: var(--primary); font-weight: bold; margin-bottom: 10px; }
+        .product-card .price { color: var(--primary); font-weight: bold; margin-bottom: 5px; }
+        .product-card .stock { font-size: 12px; color: #7f8c8d; margin-bottom: 10px; }
         .btn-delete {
             background-color: var(--danger);
             color: white;
@@ -119,14 +105,12 @@
             border-radius: 4px;
             cursor: pointer;
             font-weight: bold;
-            width: 100%;
         }
-        .btn-delete:hover { background-color: #c0392b; }
     </style>
 </head>
 <body>
 
-<!-- 1. VOTRE SCRIPT DE SÉCURITÉ (CONSERVÉ) -->
+<!-- VOTRE MIDDLEWARE DE SÉCURITÉ REPRIS -->
 <script>
   const user = JSON.parse(localStorage.getItem('user'));
 
@@ -138,56 +122,63 @@
 <div class="container">
     <header>
         <div>
-            <h1 style="margin:0;">🇸🇳 Espace Admin - Terroir Sénégal</h1>
-            <p style="margin:5px 0 0 0; color: var(--success); font-weight: bold;">Connecté en tant qu'Administrateur</p>
+            <h1 style="margin:0;">🌿 Gestion du Terroir Sénégal</h1>
+            <p style="margin:5px 0 0 0; color: var(--success); font-weight: bold;">Espace d'Administration</p>
         </div>
         <button class="btn-logout" onclick="logout()">Se déconnecter</button>
     </header>
 
     <div class="admin-grid">
-        <!-- FORMULAIRE POUR AJOUTER UN PRODUIT -->
+        <!-- FORMULAIRE -->
         <div class="card">
-            <h2>Ajouter un produit</h2>
+            <h2>Nouveau Produit</h2>
             <form id="addProductForm">
                 <div class="form-group">
-                    <label for="prod-nom">Nom du produit</label>
-                    <input type="text" id="prod-nom" placeholder="Ex: Café Touba, Sirop de Ditakh" required>
+                    <label>Nom du produit</label>
+                    <input type="text" id="prod-nom" placeholder="Ex: Bissap, Café Touba..." required>
                 </div>
                 <div class="form-group">
-                    <label for="prod-prix">Prix (FCFA)</label>
-                    <input type="number" id="prod-prix" placeholder="Ex: 3000" required>
+                    <label>Catégorie</label>
+                    <select id="prod-cat">
+                        <option value="Légumes">Légumes</option>
+                        <option value="Fruits">Fruits</option>
+                        <option value="Épices">Épices</option>
+                        <option value="Confitures">Confitures</option>
+                    </select>
                 </div>
                 <div class="form-group">
-                    <label for="prod-desc">Description</label>
-                    <textarea id="prod-desc" rows="3" placeholder="Détails du produit..."></textarea>
+                    <label>Prix (FCFA)</label>
+                    <input type="number" id="prod-prix" placeholder="Ex: 500" required>
                 </div>
                 <div class="form-group">
-                    <label for="prod-image">Image du produit</label>
+                    <label>Stock de départ</label>
+                    <input type="number" id="prod-stock" placeholder="Ex: 50" required>
+                </div>
+                <div class="form-group">
+                    <label>Image du produit</label>
                     <input type="file" id="prod-image" accept="image/*" required>
                 </div>
                 <button type="submit" class="btn-submit" id="submitBtn">Mettre en ligne</button>
             </form>
         </div>
 
-        <!-- ZONE D'AFFICHAGE ET SUPPRESSION DES PRODUITS -->
+        <!-- LISTE ET SUPPRESSION -->
         <div class="card">
-            <h2>Produits actuellement en ligne</h2>
+            <h2>Catalogue Actuel</h2>
             <div class="products-grid" id="productsContainer">
-                <p>Chargement des produits du terroir...</p>
+                <p>Chargement des produits de la base...</p>
             </div>
         </div>
     </div>
 </div>
 
-<!-- SCRIPT DE GESTION DYNAMIQUE (AJOUT / SUPPRESSION) -->
 <script>
-    // URL de votre API déployée sur Render
-    const API_URL = "https://terroir-senegal.onrender.com/api/products"; 
+    // URL relative qui s'adapte automatiquement sur Render ou en local
+    const API_URL = "/api/produits"; 
 
-    // Charger les produits dès l'ouverture de la page
     document.addEventListener("DOMContentLoaded", fetchProducts);
 
-    // ACTION : Récupérer et afficher les produits
+    // ACTION : Charger le catalogue
     async function fetchProducts() {
         const container = document.getElementById("productsContainer");
         try {
@@ -195,95 +186,83 @@
             const products = await response.json();
 
             if (!products || products.length === 0) {
-                container.innerHTML = "<p>Aucun produit disponible pour le moment.</p>";
+                container.innerHTML = "<p>Aucun produit en stock.</p>";
                 return;
             }
 
-            container.innerHTML = ""; // Enlever le message de chargement
-            
-            products.forEach(product => {
+            container.innerHTML = "";
+            products.forEach(p => {
+                // Utilisation de p.img qui matche avec vos graines (seed)
                 container.innerHTML += `
-                    <div class="product-card" id="product-${product._id}">
+                    <div class="product-card" id="product-${p._id}">
                         <div>
-                            <img src="${product.imageUrl}" alt="${product.nom}">
-                            <h4>${product.nom}</h4>
-                            <div class="price">${product.prix} FCFA</div>
+                            <img src="${p.img}" alt="${p.nom}">
+                            <h4>${p.nom}</h4>
+                            <div class="price">${p.prix} FCFA</div>
+                            <div class="stock">Stock : ${p.stock}</div>
                         </div>
-                        <button class="btn-delete" onclick="deleteProduct('${product._id}')">Supprimer</button>
+                        <button class="btn-delete" onclick="deleteProduct('${p._id}')">Supprimer</button>
                     </div>
                 `;
             });
         } catch (error) {
-            console.error("Erreur de chargement:", error);
-            container.innerHTML = "<p style='color:red;'>Erreur lors de la récupération des produits.</p>";
+            container.innerHTML = "<p style='color:red;'>Erreur lors du chargement des produits.</p>";
         }
     }
 
-    // ACTION : Soumettre le formulaire d'ajout (Texte + Image)
+    // ACTION : Envoyer le nouveau produit
     document.getElementById("addProductForm").addEventListener("submit", async (e) => {
         e.preventDefault();
-
         const submitBtn = document.getElementById("submitBtn");
-        submitBtn.innerText = "Téléversement en cours...";
+        submitBtn.innerText = "Téléversement...";
         submitBtn.disabled = true;
 
-        // Préparation des données (Obligatoire d'utiliser FormData pour envoyer un fichier)
         const formData = new FormData();
         formData.append("nom", document.getElementById("prod-nom").value);
+        formData.append("cat", document.getElementById("prod-cat").value);
         formData.append("prix", document.getElementById("prod-prix").value);
-        formData.append("description", document.getElementById("prod-desc").value);
+        formData.append("stock", document.getElementById("prod-stock").value);
         formData.append("image", document.getElementById("prod-image").files[0]);
 
         try {
-            const response = await fetch(`${API_URL}/ajouter`, {
-                method: "POST",
-                body: formData // Le navigateur gère le multipart/form-data automatiquement
-            });
+            const response = await fetch(`${API_URL}/ajouter`, { method: "POST", body: formData });
+            const data = await response.json();
 
             if (response.ok) {
-                alert("Produit ajouté avec succès !");
-                document.getElementById("addProductForm").reset(); // Vide les champs
-                fetchProducts(); // Recharge la liste
+                alert("Produit ajouté !");
+                document.getElementById("addProductForm").reset();
+                fetchProducts();
             } else {
-                const errData = await response.json();
-                alert("Erreur : " + (errData.error || "Impossible d'ajouter le produit"));
+                alert("Erreur : " + data.message);
             }
         } catch (error) {
-            console.error("Erreur réseau:", error);
-            alert("Erreur de connexion au serveur.");
+            alert("Erreur réseau serveur.");
         } finally {
             submitBtn.innerText = "Mettre en ligne";
             submitBtn.disabled = false;
         }
     });
 
-    // ACTION : Supprimer un produit
+    // ACTION : Supprimer
     async function deleteProduct(id) {
-        if (confirm("Voulez-vous vraiment retirer ce produit du marché ?")) {
+        if (confirm("Voulez-vous supprimer ce produit ?")) {
             try {
-                const response = await fetch(`${API_URL}/supprimer/${id}`, {
-                    method: "DELETE"
-                });
-
+                const response = await fetch(`${API_URL}/supprimer/${id}`, { method: "DELETE" });
                 if (response.ok) {
-                    document.getElementById(`product-${id}`).remove(); // Supprime l'élément HTML directement
-                    alert("Produit supprimé.");
+                    document.getElementById(`product-${id}`).remove();
                 } else {
-                    alert("Erreur lors de la suppression sur le serveur.");
+                    alert("Erreur lors de la suppression.");
                 }
             } catch (error) {
-                console.error("Erreur:", error);
-                alert("Une erreur est survenue.");
+                alert("Erreur réseau.");
             }
         }
     }
 
-    // ACTION : Déconnexion
     function logout() {
         localStorage.removeItem('user');
         window.location.href = "login.html";
     }
 </script>
-
 </body>
 </html>
