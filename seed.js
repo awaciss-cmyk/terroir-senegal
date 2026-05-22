@@ -2,11 +2,12 @@
  * seed.js — Initialise la base de données avec les produits
  * et crée un compte administrateur par défaut.
  *
- * Usage : node seed.js
+ * Usage : node seed.js ou npm run c (si configuré)
  */
 
 require('dotenv').config();
-const mongoose     = require('mongoose');
+const mongoose    = require('mongoose');
+const bcrypt      = require('bcrypt'); // Ajouté pour sécuriser le mot de passe admin
 const Produit      = require('./models/Produit');
 const Utilisateur  = require('./models/Utilisateur');
 
@@ -106,18 +107,33 @@ const ADMIN = {
 
 async function seed() {
   try {
-    await mongoose.connect(process.env.MONGODB_URI);
+    // Gestion flexible de la variable d'environnement (MONGO_URI ou MONGODB_URI)
+    const dbUri = process.env.MONGODB_URI || process.env.MONGO_URI;
+    if (!dbUri) {
+      throw new Error("L'URI de connexion MongoDB est absente de votre fichier .env");
+    }
+
+    await mongoose.connect(dbUri);
     console.log('✅ Connecté à MongoDB');
 
-    // Produits
+    // 1. Nettoyage et insertion des Produits
     await Produit.deleteMany({});
     const produits = await Produit.insertMany(PRODUITS);
     console.log(`✅ ${produits.length} produits insérés`);
 
-    // Admin
+    // 2. Nettoyage et création sécurisée de l'Admin
     await Utilisateur.deleteOne({ email: ADMIN.email });
-    const admin = await Utilisateur.create(ADMIN);
-    console.log(`✅ Compte admin créé : ${admin.email} / mot de passe : admin1234`);
+    
+    // Hachage du mot de passe pour qu'il soit compatible avec le système d'authentification
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(ADMIN.password, salt);
+
+    const admin = await Utilisateur.create({
+      ...ADMIN,
+      password: hashedPassword // On remplace le texte brut par la version sécurisée hachée
+    });
+    
+    console.log(`✅ Compte admin créé et sécurisé : ${admin.email} / mot de passe : admin1234`);
 
     console.log('\n🌿 Base de données initialisée avec succès !');
     console.log('⚠️  Changez le mot de passe admin avant la mise en production.\n');
