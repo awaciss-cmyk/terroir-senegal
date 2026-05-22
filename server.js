@@ -1,5 +1,4 @@
 require('dotenv').config();
-
 const express   = require('express');
 const mongoose  = require('mongoose');
 const cors      = require('cors');
@@ -11,6 +10,10 @@ const authRoutes      = require('./routes/auth');
 const produitsRoutes  = require('./routes/produits');
 const commandesRoutes = require('./routes/commandes');
 const statsRoutes     = require('./routes/stats');
+
+// ── Import modèles en haut ──
+const Produit      = require('./models/Produit');
+const Utilisateur  = require('./models/Utilisateur');
 
 const app  = express();
 const PORT = process.env.PORT || 5000;
@@ -53,32 +56,24 @@ app.get('/api/debug2', (req, res) => {
 // ── SEED (init data) ──
 app.get('/api/seed', async (req, res) => {
   try {
-    const Produit = require('./models/Produit');
-    const Utilisateur = require('./models/Utilisateur');
-
     await Produit.deleteMany({});
-
     await Produit.insertMany([
       { nom: 'Aubergine', cat: 'Légumes', prix: 300, stock: 80, img: 'https://images.unsplash.com/photo-1528826007177-f38517ce9a8a?w=600' },
-      { nom: 'Chou', cat: 'Légumes', prix: 500, stock: 60, img: 'https://images.unsplash.com/photo-1594282486552-05b4d80fbb9f?w=600' },
-      { nom: 'Papaye', cat: 'Fruits', prix: 600, stock: 40, img: 'https://images.unsplash.com/photo-1617112848923-cc2234396a8d?w=600' },
-      { nom: 'Mangue', cat: 'Fruits', prix: 100, stock: 200, img: 'https://images.unsplash.com/photo-1601493700631-2b16ec4b4716?w=600' }
+      { nom: 'Chou',     cat: 'Légumes', prix: 500, stock: 60, img: 'https://images.unsplash.com/photo-1594282486552-05b4d80fbb9f?w=600' },
+      { nom: 'Papaye',   cat: 'Fruits',  prix: 600, stock: 40, img: 'https://images.unsplash.com/photo-1617112848923-cc2234396a8d?w=600' },
+      { nom: 'Mangue',   cat: 'Fruits',  prix: 100, stock: 200, img: 'https://images.unsplash.com/photo-1601493700631-2b16ec4b4716?w=600' }
     ]);
-
     await Utilisateur.deleteOne({ email: 'admin@terroir.sn' });
-
     await Utilisateur.create({
       nom: 'Admin',
       email: 'admin@terroir.sn',
       password: 'admin1234',
       role: 'admin'
     });
-
     res.json({
       success: true,
       message: 'Base de données initialisée 🌱'
     });
-
   } catch (err) {
     res.status(500).json({
       success: false,
@@ -101,32 +96,25 @@ app.use((err, req, res, next) => {
   });
 });
 
-// ── MongoDB CONNECTION (CORRIGÉ) ──
+// ── MongoDB CONNECTION ──
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => {
     console.log('✅ MongoDB connecté');
-
     app.listen(PORT, '0.0.0.0', () => {
       console.log(`🚀 Serveur démarré sur port ${PORT}`);
-
       const APP_URL = process.env.APP_URL || `http://localhost:${PORT}`;
       const PING_INTERVAL = 10 * 60 * 1000;
-
       setInterval(() => {
         const lib = APP_URL.startsWith('https') ? https : http;
-
         lib.get(`${APP_URL}/api/health`, (res) => {
           console.log(`🏓 Auto-ping OK (${res.statusCode})`);
         }).on('error', (err) => {
           console.warn('⚠️ Auto-ping échoué:', err.message);
         });
-
       }, PING_INTERVAL);
-
       console.log(`🏓 Auto-ping activé → ${APP_URL}/api/health`);
     });
-
   })
   .catch(err => {
     console.error('❌ Erreur MongoDB :', err.message);
