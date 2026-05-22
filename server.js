@@ -58,10 +58,15 @@ app.get('/api/seed', async (req, res) => {
   try {
     await Produit.deleteMany({});
     await Produit.insertMany([
-      { nom: 'Aubergine', cat: 'Légumes', prix: 300, stock: 80, img: 'https://images.unsplash.com/photo-1528826007177-f38517ce9a8a?w=600' },
-      { nom: 'Chou',     cat: 'Légumes', prix: 500, stock: 60, img: 'https://images.unsplash.com/photo-1594282486552-05b4d80fbb9f?w=600' },
-      { nom: 'Papaye',   cat: 'Fruits',  prix: 600, stock: 40, img: 'https://images.unsplash.com/photo-1617112848923-cc2234396a8d?w=600' },
-      { nom: 'Mangue',   cat: 'Fruits',  prix: 100, stock: 200, img: 'https://images.unsplash.com/photo-1601493700631-2b16ec4b4716?w=600' }
+      { nom: 'Aubergine', cat: 'Légumes', prix: 300, stock: 80,  img: 'https://images.unsplash.com/photo-1528826007177-f38517ce9a8a?w=600', actif: true },
+      { nom: 'Chou',      cat: 'Légumes', prix: 500, stock: 60,  img: 'https://images.unsplash.com/photo-1594282486552-05b4d80fbb9f?w=600', actif: true },
+      { nom: 'Papaye',    cat: 'Fruits',  prix: 600, stock: 40,  img: 'https://images.unsplash.com/photo-1617112848923-cc2234396a8d?w=600', actif: true },
+      { nom: 'Mangue',    cat: 'Fruits',  prix: 100, stock: 200, img: 'https://images.unsplash.com/photo-1601493700631-2b16ec4b4716?w=600', actif: true },
+      { nom: 'Banane',    cat: 'Fruits',  prix: 200, stock: 100, img: 'https://images.unsplash.com/photo-1603833665858-e61d17a86224?w=600', actif: true },
+      { nom: 'Citron',    cat: 'Fruits',  prix: 500, stock: 80,  img: 'https://images.unsplash.com/photo-1590502593747-42a996133562?w=600', actif: true },
+      { nom: 'Carotte',   cat: 'Légumes', prix: 600, stock: 90,  img: 'https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?w=600', actif: true },
+      { nom: 'Orange',    cat: 'Fruits',  prix: 800, stock: 70,  img: 'https://images.unsplash.com/photo-1547514701-42782101795e?w=600', actif: true },
+      { nom: 'Poivron',   cat: 'Légumes', prix: 600, stock: 1,   img: 'https://images.unsplash.com/photo-1563565375-f3fdfdbefa83?w=600', actif: true }
     ]);
     await Utilisateur.deleteOne({ email: 'admin@terroir.sn' });
     await Utilisateur.create({
