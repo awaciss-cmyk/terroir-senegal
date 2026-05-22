@@ -1,7 +1,6 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const Utilisateur = require('../models/Utilisateur');
-
 const router = express.Router();
 
 // 🔑 TOKEN
@@ -21,19 +20,20 @@ router.post('/register', async (req, res) => {
       return res.status(409).json({ success: false, message: "Email déjà utilisé" });
     }
 
-    const user = await Utilisateur.create({
-      nom,
-      email,
-      password,
-      telephone
-    });
+    // ✅ new + save() pour déclencher le hashage automatique
+    const user = new Utilisateur({ nom, email, password, telephone });
+    await user.save();
 
     res.status(201).json({
       success: true,
       token: genererToken(user._id),
-      user
+      user: {
+        id: user._id,
+        nom: user.nom,
+        email: user.email,
+        role: user.role
+      }
     });
-
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
@@ -46,7 +46,8 @@ router.post('/login', async (req, res) => {
 
     const user = await Utilisateur.findOne({ email });
 
-    if (!user || user.password !== password) {
+    // ✅ Comparaison avec bcrypt via la méthode du modèle
+    if (!user || !(await user.verifierPassword(password))) {
       return res.status(401).json({
         success: false,
         message: "Email ou mot de passe incorrect"
@@ -63,7 +64,6 @@ router.post('/login', async (req, res) => {
         role: user.role
       }
     });
-
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
