@@ -115,4 +115,11 @@ mongoose
   .catch(err => {
     console.error('❌ Erreur MongoDB :', err.message);
     process.exit(1);
+    mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => {
+    console.log('✅ MongoDB connecté');
+
+    app.listen(PORT, '0.0.0.0', () => {
+      console.log(`🚀 Serveur démarré sur
   });
