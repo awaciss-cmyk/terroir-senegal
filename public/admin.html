@@ -94,7 +94,13 @@
             border-radius: 4px;
             margin-bottom: 10px;
         }
-        .product-card h4 { margin: 5px 0; font-size: 16px; }
+        .product-card h4 { 
+            margin: 5px 0; 
+            font-size: 16px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
         .product-card .price { color: var(--primary); font-weight: bold; margin-bottom: 5px; }
         .product-card .stock { font-size: 12px; color: #7f8c8d; margin-bottom: 10px; }
         .btn-delete {
@@ -110,7 +116,6 @@
 </head>
 <body>
 
-<!-- VOTRE MIDDLEWARE DE SÉCURITÉ REPRIS -->
 <script>
   const user = JSON.parse(localStorage.getItem('user'));
 
@@ -144,15 +149,16 @@
                         <option value="Fruits">Fruits</option>
                         <option value="Épices">Épices</option>
                         <option value="Confitures">Confitures</option>
+                        <option value="Divers">Divers</option> <!-- Cohérent avec l'enum Mongoose -->
                     </select>
                 </div>
                 <div class="form-group">
                     <label>Prix (FCFA)</label>
-                    <input type="number" id="prod-prix" placeholder="Ex: 500" required>
+                    <input type="number" id="prod-prix" min="0" placeholder="Ex: 500" required>
                 </div>
                 <div class="form-group">
                     <label>Stock de départ</label>
-                    <input type="number" id="prod-stock" placeholder="Ex: 50" required>
+                    <input type="number" id="prod-stock" min="0" placeholder="Ex: 50" required>
                 </div>
                 <div class="form-group">
                     <label>Image du produit</label>
@@ -173,7 +179,6 @@
 </div>
 
 <script>
-    // URL relative qui s'adapte automatiquement sur Render ou en local
     const API_URL = "/api/produits"; 
 
     document.addEventListener("DOMContentLoaded", fetchProducts);
@@ -192,12 +197,11 @@
 
             container.innerHTML = "";
             products.forEach(p => {
-                // Utilisation de p.img qui matche avec vos graines (seed)
                 container.innerHTML += `
                     <div class="product-card" id="product-${p._id}">
                         <div>
                             <img src="${p.img}" alt="${p.nom}">
-                            <h4>${p.nom}</h4>
+                            <h4 title="${p.nom}">${p.nom}</h4>
                             <div class="price">${p.prix} FCFA</div>
                             <div class="stock">Stock : ${p.stock}</div>
                         </div>
@@ -229,29 +233,32 @@
             const data = await response.json();
 
             if (response.ok) {
-                alert("Produit ajouté !");
+                alert("Produit ajouté avec succès !");
                 document.getElementById("addProductForm").reset();
                 fetchProducts();
             } else {
                 alert("Erreur : " + data.message);
             }
         } catch (error) {
-            alert("Erreur réseau serveur.");
+            alert("Erreur réseau avec le serveur.");
         } finally {
             submitBtn.innerText = "Mettre en ligne";
             submitBtn.disabled = false;
         }
     });
 
-    // ACTION : Supprimer
+    // ACTION : Supprimer un produit
     async function deleteProduct(id) {
-        if (confirm("Voulez-vous supprimer ce produit ?")) {
+        if (confirm("Voulez-vous vraiment supprimer ce produit du catalogue ?")) {
             try {
                 const response = await fetch(`${API_URL}/supprimer/${id}`, { method: "DELETE" });
+                const data = await response.json();
+                
                 if (response.ok) {
-                    document.getElementById(`product-${id}`).remove();
+                    const productElement = document.getElementById(`product-${id}`);
+                    if (productElement) productElement.remove();
                 } else {
-                    alert("Erreur lors de la suppression.");
+                    alert("Erreur : " + data.message);
                 }
             } catch (error) {
                 alert("Erreur réseau.");
