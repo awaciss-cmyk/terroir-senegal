@@ -606,9 +606,17 @@
         </div>
       </div>
       <div class="paiement-form" id="form-wave">
-        <div class="form-group"><label>Numéro Wave</label><input type="tel" id="wave-tel" placeholder="77 000 00 00"></div>
-        <p style="color:#666;font-size:0.8rem;margin-bottom:12px">📱 Vous recevrez une notification Wave.</p>
-        <button class="btn-primary" onclick="confirmerPaiement()" style="background:#1a9ef0">🌊 Payer via Wave</button>
+        <div style="background:#e8f4fd;border-radius:12px;padding:16px;margin-bottom:16px;text-align:center">
+          <div style="font-size:2rem;margin-bottom:8px">🌊</div>
+          <p style="font-weight:600;color:#0a5c8a;margin-bottom:4px">Paiement Wave instantané</p>
+          <p style="font-size:0.82rem;color:#555;line-height:1.5">
+            En cliquant sur <strong>"Payer via Wave"</strong>, l'application Wave s'ouvrira automatiquement avec le montant déjà rempli. Il vous suffira de confirmer.
+          </p>
+        </div>
+        <input type="hidden" id="wave-tel" value="771057410">
+        <button class="btn-primary" onclick="confirmerPaiement()" style="background:#1a9ef0;font-size:1rem;padding:14px">
+          🌊 Ouvrir Wave &amp; Payer
+        </button>
       </div>
       <div class="paiement-form" id="form-carte">
         <div class="form-group"><label>Titulaire</label><input type="text" id="carte-nom" placeholder="MAMADOU DIALLO"></div>
@@ -664,7 +672,7 @@
           </div>
           <div class="stat-card">
             <div class="val" id="stat-users">—</div>
-            <div class="lab">👥 Clients</div>
+            <div class="lab">⏳ En attente</div>
           </div>
         </div>
 
@@ -1031,22 +1039,68 @@
 
   async function confirmerPaiement() {
     if (!methodePaiement) { showToast('⚠️ Choisissez une méthode'); return; }
-    if (methodePaiement === 'wave' && !document.getElementById('wave-tel').value.trim()) {
-      showToast('⚠️ Entrez votre numéro Wave'); return;
+
+    const carteNom = document.getElementById('carte-nom').value.trim();
+    const carteNum = document.getElementById('carte-num').value.trim();
+    const total    = panier.reduce((s,p) => s+p.prix*p.qte, 0);
+
+    // Helper : enregistrer la commande en base
+    async function enregistrerCommande(paiementData) {
+      const articles = panier.map(p => ({
+        produitId: p.id, nom: p.nom, prix: p.prix,
+        quantite: p.qte, sousTotal: p.prix * p.qte
+      }));
+      try {
+        const res = await fetch('/api/commandes', {
+          method: 'POST',
+          headers: { 'Content-Type':'application/json', ...(token ? { Authorization:'Bearer '+token } : {}) },
+          body: JSON.stringify({ articles, paiement: paiementData })
+        });
+        return await res.json();
+      } catch(e) { return { success: false }; }
     }
-    if (methodePaiement === 'carte') {
-      if (!document.getElementById('carte-nom').value.trim() || !document.getElementById('carte-num').value.trim()) {
-        showToast('⚠️ Remplissez les infos de carte'); return;
-      }
+
+    // ── WAVE : redirection directe vers l'app ──────────────────────────────
+    if (methodePaiement === 'wave') {
+      // 1. Enregistrer la commande
+      await enregistrerCommande({ methode: 'wave' });
+
+      // 2. Construire le deep link Wave
+      const MARCHAND    = '221771057410';
+      const note        = encodeURIComponent('Terroir Senegal');
+      const waveApp     = `wave://send?phone=${MARCHAND}&amount=${total}&note=${note}`;
+      const waveWeb     = `https://www.wave.com/send?phone=%2B${MARCHAND}&amount=${total}&note=${note}`;
+
+      // 3. Ouvrir l'app Wave (ou le web en fallback)
+      window.location.href = waveApp;
+      setTimeout(() => { window.open(waveWeb, '_blank'); }, 1500);
+
+      // 4. Vider panier + confirmation
+      panier = [];
+      document.getElementById('panier-count').textContent = 0;
+      document.getElementById('paiement-etape-1').style.display = 'none';
+      document.getElementById('paiement-etape-2').style.display = 'block';
+      return;
     }
-    try {
-      const total = panier.reduce((s,p) => s+p.prix*p.qte, 0);
-      await fetch('/api/commandes', {
-        method: 'POST',
-        headers: { 'Content-Type':'application/json', ...(token ? { Authorization:'Bearer '+token } : {}) },
-        body: JSON.stringify({ produits: panier.map(p => ({ produit:p.id, quantite:p.qte, prix:p.prix })), total, methodePaiement })
-      });
-    } catch(e) {}
+
+    // ── CARTE BANCAIRE ─────────────────────────────────────────────────────
+    if (!carteNom || !carteNum) {
+      showToast('⚠️ Remplissez les infos de carte'); return;
+    }
+
+    const result = await enregistrerCommande({
+      methode:   'carte',
+      titulaire: carteNom,
+      derniers4: carteNum.replace(/\s/g,'').slice(-4)
+    });
+
+    if (result && !result.success) {
+      showToast('❌ ' + (result.message || 'Erreur lors de la commande'));
+      return;
+    }
+
+    panier = [];
+    document.getElementById('panier-count').textContent = 0;
     document.getElementById('paiement-etape-1').style.display = 'none';
     document.getElementById('paiement-etape-2').style.display = 'block';
   }
@@ -1080,18 +1134,16 @@
 
       if (data.success) {
         const s = data.data;
-        document.getElementById('stat-ca').textContent   = (s.chiffreAffaires || 0).toLocaleString('fr-FR') + ' F';
+        // Champs exacts retournés par routes/stats.js
+        document.getElementById('stat-ca').textContent   = (s.revenuTotal || 0).toLocaleString('fr-FR') + ' F';
         document.getElementById('stat-cmd').textContent  = s.totalCommandes || 0;
         document.getElementById('stat-prod').textContent = s.totalProduits || 0;
-        document.getElementById('stat-users').textContent= s.totalUtilisateurs || 0;
+        // Pas de totalUtilisateurs dans le backend actuel → on affiche les commandes en attente
+        document.getElementById('stat-users').textContent= s.enAttente ?? '—';
 
-        // ── Top produits les plus vendus ──────────────
-        // On construit le classement depuis les commandes si disponible,
-        // sinon on affiche un message vide
-        const topProduits = s.topProduits || [];
-        renderTopProduits(topProduits);
+        // ── Top produits (champs: _id=nom, qte, revenu) ──
+        renderTopProduits(s.topProduits || []);
       } else {
-        // Essayer quand même d'afficher les stats de base
         document.getElementById('stat-ca').textContent   = '—';
         document.getElementById('stat-cmd').textContent  = '—';
         document.getElementById('stat-prod').textContent = '—';
@@ -1136,9 +1188,9 @@
     tbody.innerHTML = liste.slice(0, 5).map((p, i) => `
       <tr>
         <td class="rang">${rangs[i] || (i+1)}</td>
-        <td><strong>${p.nom || p._id || 'Produit'}</strong></td>
-        <td><span class="qte-badge">${p.quantiteVendue || p.qteTotal || 0}</span></td>
-        <td>${(p.revenus || p.chiffreAffaires || 0).toLocaleString('fr-FR')} F</td>
+        <td><strong>${p._id || 'Produit'}</strong></td>
+        <td><span class="qte-badge">${p.qte || 0}</span></td>
+        <td>${(p.revenu || 0).toLocaleString('fr-FR')} F</td>
       </tr>
     `).join('');
   }
