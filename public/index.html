@@ -17,342 +17,183 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'DM Sans', sans-serif; background: var(--gris); color: var(--texte); }
 
-    /* ═══════════════════════════════════════════════
-       ÉCRAN DE GARDE (connexion obligatoire)
-    ═══════════════════════════════════════════════ */
     #garde-acces {
-      position: fixed;
-      inset: 0;
-      z-index: 9999;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      position: fixed; inset: 0; z-index: 9999;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
       background: linear-gradient(145deg, #0d3d1a 0%, #1a6b2f 50%, #2e7d32 100%);
-      color: white;
-      text-align: center;
-      padding: 2rem;
+      color: white; text-align: center; padding: 2rem;
     }
     #garde-acces .garde-motif {
-      position: absolute;
-      inset: 0;
+      position: absolute; inset: 0;
       background-image: radial-gradient(circle at 20% 30%, rgba(255,255,255,0.04) 0%, transparent 50%),
                         radial-gradient(circle at 80% 70%, rgba(200,134,10,0.08) 0%, transparent 50%);
       pointer-events: none;
     }
-    #garde-acces .garde-logo {
-      font-size: 5rem;
-      margin-bottom: 1rem;
-      animation: pulse-logo 2.5s ease-in-out infinite;
-    }
-    @keyframes pulse-logo {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.06); }
-    }
-    #garde-acces h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: 2.8rem;
-      margin-bottom: 0.5rem;
-      letter-spacing: -0.5px;
-    }
-    #garde-acces .garde-sous-titre {
-      font-size: 1.05rem;
-      opacity: 0.75;
-      margin-bottom: 2.5rem;
-      max-width: 340px;
-      line-height: 1.6;
-    }
-    #garde-acces .garde-tagline {
-      display: flex;
-      gap: 16px;
-      margin-bottom: 2.5rem;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
+    #garde-acces .garde-logo { font-size: 5rem; margin-bottom: 1rem; animation: pulse-logo 2.5s ease-in-out infinite; }
+    @keyframes pulse-logo { 0%,100%{transform:scale(1)} 50%{transform:scale(1.06)} }
+    #garde-acces h1 { font-family: 'Playfair Display', serif; font-size: 2.8rem; margin-bottom: 0.5rem; }
+    #garde-acces .garde-sous-titre { font-size: 1.05rem; opacity: 0.75; margin-bottom: 2.5rem; max-width: 340px; line-height: 1.6; }
+    #garde-acces .garde-tagline { display: flex; gap: 16px; margin-bottom: 2.5rem; flex-wrap: wrap; justify-content: center; }
     #garde-acces .garde-tagline span {
-      background: rgba(255,255,255,0.1);
-      border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 30px;
-      padding: 6px 16px;
-      font-size: 0.82rem;
-      backdrop-filter: blur(4px);
+      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 30px; padding: 6px 16px; font-size: 0.82rem; backdrop-filter: blur(4px);
     }
+    .garde-btns { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
     #btn-ouvrir-login {
-      background: var(--or);
-      color: white;
-      border: none;
-      padding: 14px 40px;
-      border-radius: 50px;
-      font-size: 1.05rem;
-      font-weight: 600;
-      cursor: pointer;
-      font-family: 'DM Sans', sans-serif;
-      box-shadow: 0 6px 24px rgba(200,134,10,0.45);
+      background: var(--or); color: white; border: none; padding: 14px 36px;
+      border-radius: 50px; font-size: 1.05rem; font-weight: 600; cursor: pointer;
+      font-family: 'DM Sans', sans-serif; box-shadow: 0 6px 24px rgba(200,134,10,0.45);
       transition: transform 0.2s, box-shadow 0.2s;
-      position: relative;
     }
-    #btn-ouvrir-login:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 32px rgba(200,134,10,0.55);
+    #btn-ouvrir-login:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(200,134,10,0.55); }
+    #btn-ouvrir-register {
+      background: rgba(255,255,255,0.15); color: white;
+      border: 2px solid rgba(255,255,255,0.4); padding: 14px 36px;
+      border-radius: 50px; font-size: 1.05rem; font-weight: 600; cursor: pointer;
+      font-family: 'DM Sans', sans-serif; backdrop-filter: blur(4px);
+      transition: transform 0.2s, background 0.2s;
     }
-    #garde-acces .garde-flag {
-      margin-top: 2rem;
-      font-size: 0.85rem;
-      opacity: 0.5;
-    }
+    #btn-ouvrir-register:hover { transform: translateY(-2px); background: rgba(255,255,255,0.25); }
+    #garde-acces .garde-flag { margin-top: 2rem; font-size: 0.85rem; opacity: 0.5; }
 
-    /* HEADER */
     header {
-      background: var(--vert);
-      color: white;
-      padding: 14px 24px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+      background: var(--vert); color: white; padding: 14px 24px;
+      display: flex; justify-content: space-between; align-items: center;
+      position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 12px rgba(0,0,0,0.2);
     }
     header h1 { font-family: 'Playfair Display', serif; font-size: 1.5rem; }
     .header-btns { display: flex; gap: 10px; align-items: center; }
     .header-btns button {
-      background: rgba(255,255,255,0.15);
-      color: white;
-      border: 1px solid rgba(255,255,255,0.3);
-      padding: 7px 14px;
-      border-radius: 20px;
-      cursor: pointer;
-      font-size: 0.85rem;
-      transition: background 0.2s;
+      background: rgba(255,255,255,0.15); color: white;
+      border: 1px solid rgba(255,255,255,0.3); padding: 7px 14px;
+      border-radius: 20px; cursor: pointer; font-size: 0.85rem; transition: background 0.2s;
     }
     .header-btns button:hover { background: rgba(255,255,255,0.3); }
     #panier-count {
-      background: var(--or);
-      color: white;
-      border-radius: 50%;
-      padding: 1px 6px;
-      font-size: 0.75rem;
-      margin-left: 4px;
+      background: var(--or); color: white; border-radius: 50%;
+      padding: 1px 6px; font-size: 0.75rem; margin-left: 4px;
     }
 
-    /* TOAST */
     #toast {
-      position: fixed;
-      bottom: 24px;
-      left: 50%;
+      position: fixed; bottom: 24px; left: 50%;
       transform: translateX(-50%) translateY(80px);
-      background: var(--vert);
-      color: white;
-      padding: 12px 24px;
-      border-radius: 30px;
-      font-size: 0.9rem;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.25);
-      z-index: 9999;
-      transition: transform 0.3s ease;
-      pointer-events: none;
+      background: var(--vert); color: white; padding: 12px 24px;
+      border-radius: 30px; font-size: 0.9rem; box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+      z-index: 99999; transition: transform 0.3s ease; pointer-events: none;
     }
     #toast.show { transform: translateX(-50%) translateY(0); }
 
-    /* FILTRES */
     .filtres {
-      display: flex;
-      gap: 10px;
-      padding: 16px 24px;
-      overflow-x: auto;
-      background: white;
-      border-bottom: 1px solid #ddd;
+      display: flex; gap: 10px; padding: 16px 24px;
+      overflow-x: auto; background: white; border-bottom: 1px solid #ddd;
     }
     .filtres button {
-      background: var(--gris);
-      border: none;
-      padding: 7px 16px;
-      border-radius: 20px;
-      cursor: pointer;
-      font-size: 0.85rem;
-      white-space: nowrap;
-      transition: all 0.2s;
+      background: var(--gris); border: none; padding: 7px 16px;
+      border-radius: 20px; cursor: pointer; font-size: 0.85rem;
+      white-space: nowrap; transition: all 0.2s;
     }
     .filtres button.active, .filtres button:hover { background: var(--vert); color: white; }
 
-    /* GRILLE PRODUITS */
     .container {
       padding: 24px;
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-      gap: 18px;
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 18px;
     }
 
-    /* CARTE */
     .card {
-      background: white;
-      border-radius: 14px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.07);
-      overflow: hidden;
+      background: white; border-radius: 14px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.07); overflow: hidden;
       transition: transform 0.2s, box-shadow 0.2s;
     }
     .card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.13); }
-
-    .card-img-wrap {
-      width: 100%;
-      height: 170px;
-      overflow: hidden;
-      position: relative;
-      background: #e8e8e8;
-    }
-    .card-img-wrap img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-      transition: transform 0.4s ease;
-    }
+    .card-img-wrap { width: 100%; height: 170px; overflow: hidden; position: relative; background: #e8e8e8; }
+    .card-img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s ease; }
     .card:hover .card-img-wrap img { transform: scale(1.07); }
-    .card-img-placeholder {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 4rem;
-    }
+    .card-img-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 4rem; }
     .card-badge {
-      position: absolute;
-      top: 8px;
-      left: 8px;
-      background: rgba(26,107,47,0.88);
-      color: white;
-      font-size: 0.68rem;
-      font-weight: 600;
-      padding: 3px 10px;
-      border-radius: 20px;
-      letter-spacing: 0.3px;
+      position: absolute; top: 8px; left: 8px;
+      background: rgba(26,107,47,0.88); color: white;
+      font-size: 0.68rem; font-weight: 600; padding: 3px 10px;
+      border-radius: 20px; letter-spacing: 0.3px;
     }
-
     .card-body { padding: 12px 14px; }
     .card-body h3 { font-size: 1rem; margin-bottom: 3px; }
     .card-body .stock { font-size: 0.75rem; color: #999; margin-bottom: 6px; }
     .card-body .prix { color: var(--vert); font-weight: 700; font-size: 1rem; margin-bottom: 10px; }
     .card-body .btn-ajouter {
-      background: var(--vert);
-      color: white;
-      border: none;
-      padding: 8px 14px;
-      border-radius: 8px;
-      cursor: pointer;
-      width: 100%;
-      font-size: 0.9rem;
-      font-family: inherit;
-      transition: background 0.2s;
+      background: var(--vert); color: white; border: none; padding: 8px 14px;
+      border-radius: 8px; cursor: pointer; width: 100%; font-size: 0.9rem;
+      font-family: inherit; transition: background 0.2s;
     }
     .card-body .btn-ajouter:hover { background: #145224; }
 
-    /* OVERLAYS */
+    /* OVERLAYS — z-index > garde (9999) */
     .overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.5);
-      z-index: 200;
-      justify-content: center;
-      align-items: center;
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5); z-index: 10000;
+      justify-content: center; align-items: center;
     }
     .overlay.show { display: flex; }
     .modal {
-      background: white;
-      border-radius: 16px;
-      padding: 28px;
-      width: 90%;
-      max-width: 480px;
-      max-height: 85vh;
-      overflow-y: auto;
-      position: relative;
+      background: white; border-radius: 16px; padding: 28px;
+      width: 90%; max-width: 480px; max-height: 85vh; overflow-y: auto; position: relative;
     }
     .modal h2 { font-family: 'Playfair Display', serif; margin-bottom: 18px; }
-    .modal .close {
-      position: absolute;
-      top: 14px; right: 18px;
-      background: none; border: none;
-      font-size: 1.4rem; cursor: pointer; color: #666;
-    }
+    .modal .close { position: absolute; top: 14px; right: 18px; background: none; border: none; font-size: 1.4rem; cursor: pointer; color: #666; }
 
-    /* FORMULAIRES */
+    /* Tabs connexion/inscription */
+    .auth-tabs { display: flex; border-bottom: 2px solid #eee; margin-bottom: 20px; }
+    .auth-tab {
+      flex: 1; padding: 10px; border: none; background: none; cursor: pointer;
+      font-family: inherit; font-size: 0.95rem; color: #999; font-weight: 500;
+      transition: all 0.2s; border-bottom: 2px solid transparent; margin-bottom: -2px;
+    }
+    .auth-tab.active { color: var(--vert); border-bottom-color: var(--vert); }
+
     .form-group { margin-bottom: 14px; }
     .form-group label { display: block; font-size: 0.85rem; margin-bottom: 5px; color: #555; }
     .form-group input, .form-group select {
-      width: 100%;
-      padding: 10px 14px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      font-size: 0.95rem;
-      font-family: inherit;
+      width: 100%; padding: 10px 14px; border: 1px solid #ddd;
+      border-radius: 8px; font-size: 0.95rem; font-family: inherit;
     }
     .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--vert); }
     .btn-primary {
-      background: var(--vert);
-      color: white;
-      border: none;
-      padding: 11px 20px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 0.95rem;
-      font-family: inherit;
-      width: 100%;
-      transition: background 0.2s;
+      background: var(--vert); color: white; border: none; padding: 11px 20px;
+      border-radius: 8px; cursor: pointer; font-size: 0.95rem;
+      font-family: inherit; width: 100%; transition: background 0.2s;
     }
     .btn-primary:hover { background: #145224; }
     .btn-danger {
-      background: var(--rouge);
-      color: white;
-      border: none;
-      padding: 7px 14px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 0.85rem;
+      background: var(--rouge); color: white; border: none;
+      padding: 7px 14px; border-radius: 8px; cursor: pointer; font-size: 0.85rem;
     }
 
-    /* PANIER */
+    /* Lien switch sous le formulaire */
+    .auth-switch { margin-top: 14px; text-align: center; font-size: 0.85rem; color: #888; }
+    .auth-switch a { color: var(--vert); cursor: pointer; font-weight: 600; text-decoration: none; }
+    .auth-switch a:hover { text-decoration: underline; }
+
     .panier-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 0;
-      border-bottom: 1px solid #eee;
-      font-size: 0.9rem;
-      gap: 8px;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 0; border-bottom: 1px solid #eee; font-size: 0.9rem; gap: 8px;
     }
     .panier-item .item-nom { flex: 1; }
     .panier-item .item-prix { font-weight: 600; color: var(--vert); white-space: nowrap; }
     .item-qte { display: flex; align-items: center; gap: 6px; }
     .item-qte button {
-      width: 24px; height: 24px;
-      border-radius: 50%;
-      border: 1px solid #ddd;
-      background: white;
-      cursor: pointer;
-      font-size: 0.9rem;
+      width: 24px; height: 24px; border-radius: 50%; border: 1px solid #ddd;
+      background: white; cursor: pointer; font-size: 0.9rem;
       display: flex; align-items: center; justify-content: center;
     }
     .panier-total {
-      font-weight: 700;
-      font-size: 1.1rem;
-      text-align: right;
-      margin: 16px 0 8px;
-      color: var(--vert);
-      padding: 10px;
-      background: var(--vert-clair);
-      border-radius: 8px;
+      font-weight: 700; font-size: 1.1rem; text-align: right;
+      margin: 16px 0 8px; color: var(--vert); padding: 10px;
+      background: var(--vert-clair); border-radius: 8px;
     }
 
-    /* PAIEMENT */
     .paiement-methodes { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
     .paiement-methode {
-      border: 2px solid #eee;
-      border-radius: 12px;
-      padding: 16px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.2s;
+      border: 2px solid #eee; border-radius: 12px; padding: 16px;
+      text-align: center; cursor: pointer; transition: all 0.2s;
     }
     .paiement-methode:hover { border-color: var(--vert); }
     .paiement-methode.selected { border-color: var(--vert); background: var(--vert-clair); }
@@ -369,109 +210,29 @@
     .success-box h3 { font-family: 'Playfair Display', serif; font-size: 1.4rem; margin-bottom: 8px; }
     .success-box p { color: #666; font-size: 0.9rem; }
 
-    /* ═══════════════════════════════════════════════
-       ADMIN — redesign complet
-    ═══════════════════════════════════════════════ */
-    .modal-admin {
-      max-width: 560px;
-    }
-
-    /* Grille de stats */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
+    .modal-admin { max-width: 560px; }
+    .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
     .stat-card {
-      background: var(--vert-clair);
-      border-radius: 12px;
-      padding: 14px 16px;
-      text-align: center;
-      border-left: 4px solid var(--vert);
-      transition: transform 0.2s;
+      background: var(--vert-clair); border-radius: 12px; padding: 14px 16px;
+      text-align: center; border-left: 4px solid var(--vert); transition: transform 0.2s;
     }
     .stat-card:hover { transform: translateY(-2px); }
-    .stat-card .val {
-      font-size: 1.4rem;
-      font-weight: 700;
-      color: var(--vert);
-      font-family: 'Playfair Display', serif;
-    }
+    .stat-card .val { font-size: 1.4rem; font-weight: 700; color: var(--vert); font-family: 'Playfair Display', serif; }
     .stat-card .lab { font-size: 0.78rem; color: #666; margin-top: 2px; }
-
-    /* Section Top Produits */
-    .top-section {
-      margin-top: 6px;
-    }
-    .top-section h3 {
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: var(--texte);
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .top-section h3::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: #e0e0e0;
-    }
-    .top-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.85rem;
-    }
-    .top-table thead tr {
-      background: #f8f8f6;
-    }
-    .top-table th {
-      padding: 8px 10px;
-      text-align: left;
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: #888;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
+    .top-section { margin-top: 6px; }
+    .top-section h3 { font-size: 0.95rem; font-weight: 600; color: var(--texte); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+    .top-section h3::after { content: ''; flex: 1; height: 1px; background: #e0e0e0; }
+    .top-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .top-table thead tr { background: #f8f8f6; }
+    .top-table th { padding: 8px 10px; text-align: left; font-size: 0.75rem; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
     .top-table th:last-child { text-align: right; }
-    .top-table td {
-      padding: 9px 10px;
-      border-bottom: 1px solid #f0f0f0;
-      vertical-align: middle;
-    }
+    .top-table td { padding: 9px 10px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
     .top-table td:last-child { text-align: right; font-weight: 700; color: var(--vert); }
     .top-table tbody tr:hover { background: #fafaf8; }
-    .top-table .rang {
-      font-size: 1.1rem;
-      text-align: center;
-    }
-    .top-table .qte-badge {
-      display: inline-block;
-      background: #eee;
-      border-radius: 20px;
-      padding: 2px 10px;
-      font-size: 0.8rem;
-      color: #555;
-    }
-    .top-vide {
-      text-align: center;
-      padding: 24px;
-      color: #aaa;
-      font-size: 0.88rem;
-    }
-
-    /* Barre de chargement stats */
-    .stats-loader {
-      text-align: center;
-      padding: 20px;
-      color: #aaa;
-      font-size: 0.88rem;
-    }
-
-    /* Tabs admin */
+    .top-table .rang { font-size: 1.1rem; text-align: center; }
+    .top-table .qte-badge { display: inline-block; background: #eee; border-radius: 20px; padding: 2px 10px; font-size: 0.8rem; color: #555; }
+    .top-vide { text-align: center; padding: 24px; color: #aaa; font-size: 0.88rem; }
+    .stats-loader { text-align: center; padding: 20px; color: #aaa; font-size: 0.88rem; }
     .img-preview { width: 100%; height: 140px; object-fit: cover; border-radius: 8px; margin-top: 8px; display: none; border: 1px solid #ddd; }
     .tab-btns { display: flex; gap: 8px; margin-bottom: 16px; }
     .tab-btn { flex: 1; padding: 8px; border: 1px solid var(--vert); border-radius: 8px; background: white; color: var(--vert); cursor: pointer; font-size: 0.85rem; font-family: inherit; transition: all 0.2s; }
@@ -482,31 +243,23 @@
     .msg { padding: 10px; border-radius: 8px; font-size: 0.88rem; margin-bottom: 10px; text-align: center; }
     .msg.ok { background: #d4edda; color: #155724; }
     .msg.err { background: #f8d7da; color: #721c24; }
-
-    /* Upload image amélioré */
     .upload-zone {
-      border: 2px dashed #ccc;
-      border-radius: 10px;
-      padding: 16px;
-      text-align: center;
-      cursor: pointer;
-      transition: border-color 0.2s, background 0.2s;
-      position: relative;
+      border: 2px dashed #ccc; border-radius: 10px; padding: 16px;
+      text-align: center; cursor: pointer; transition: border-color 0.2s, background 0.2s; position: relative;
     }
     .upload-zone:hover { border-color: var(--vert); background: var(--vert-clair); }
-    .upload-zone input[type=file] {
-      position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
-    }
+    .upload-zone input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
     .upload-zone .upload-label { font-size: 0.85rem; color: #888; pointer-events: none; }
     .upload-zone .upload-icon { font-size: 1.8rem; display: block; margin-bottom: 4px; pointer-events: none; }
+    .ou-separateur { display: flex; align-items: center; gap: 10px; margin: 10px 0; color: #bbb; font-size: 0.8rem; }
+    .ou-separateur::before, .ou-separateur::after { content: ''; flex: 1; height: 1px; background: #e0e0e0; }
 
-    /* Séparateur OU */
-    .ou-separateur {
-      display: flex; align-items: center; gap: 10px;
-      margin: 10px 0; color: #bbb; font-size: 0.8rem;
-    }
-    .ou-separateur::before, .ou-separateur::after {
-      content: ''; flex: 1; height: 1px; background: #e0e0e0;
+    /* Badge utilisateur connecté */
+    #user-badge {
+      display: none;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      padding: 7px 14px; border-radius: 20px; font-size: 0.85rem; color: white;
     }
   </style>
 </head>
@@ -517,9 +270,7 @@
   ⏳ Le serveur démarre (peut prendre 30–60s sur Render free)... <span id="wake-count">60</span>s
 </div>
 
-<!-- ═══════════════════════════════════════════
-     ÉCRAN DE GARDE — connexion obligatoire
-═══════════════════════════════════════════ -->
+<!-- ÉCRAN DE GARDE -->
 <div id="garde-acces">
   <div class="garde-motif"></div>
   <div class="garde-logo">🌿</div>
@@ -530,7 +281,10 @@
     <span>🌶️ Épices locales</span>
     <span>🍯 Confitures artisanales</span>
   </div>
-  <button id="btn-ouvrir-login">🔑 Se connecter pour accéder</button>
+  <div class="garde-btns">
+    <button id="btn-ouvrir-login">🔑 Se connecter</button>
+    <button id="btn-ouvrir-register">✨ Créer un compte</button>
+  </div>
   <p class="garde-flag">🇸🇳 Made in Sénégal</p>
 </div>
 
@@ -539,6 +293,7 @@
   <h1>🌿 Terroir Sénégal</h1>
   <div class="header-btns">
     <button onclick="ouvrirAdmin()" id="admin-btn" style="display:none">📊 Stats Admin</button>
+    <span id="user-badge"></span>
     <button onclick="ouvrirLogin()" id="login-btn">🔑 Connexion</button>
     <button onclick="deconnexion()" id="logout-btn" style="display:none">Déconnexion</button>
     <button id="panier-btn" onclick="ouvrirPanier()">🛒 Panier <span id="panier-count">0</span></button>
@@ -557,26 +312,59 @@
 <!-- PRODUITS -->
 <div class="container" id="produits"></div>
 
-<!-- ═══ LOGIN ═══ -->
+<!-- ═══ MODAL AUTH (Connexion + Inscription) ═══ -->
 <div class="overlay" id="overlay-login">
   <div class="modal">
     <button class="close" onclick="fermer('overlay-login')">✕</button>
-    <h2>🔑 Connexion</h2>
-    <div id="login-msg"></div>
-    <div class="form-group">
-      <label>Email</label>
-      <input type="email" id="email" placeholder="admin@terroir.sn" onkeydown="if(event.key==='Enter')login()">
+
+    <!-- Tabs -->
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tab-login-btn" onclick="switchAuthTab('login')">🔑 Connexion</button>
+      <button class="auth-tab" id="tab-register-btn" onclick="switchAuthTab('register')">✨ Inscription</button>
     </div>
-    <div class="form-group">
-      <label>Mot de passe</label>
-      <input type="password" id="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')login()">
+
+    <!-- FORMULAIRE CONNEXION -->
+    <div id="form-login">
+      <div id="login-msg"></div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="email" placeholder="vous@exemple.sn" onkeydown="if(event.key==='Enter')login()">
+      </div>
+      <div class="form-group">
+        <label>Mot de passe</label>
+        <input type="password" id="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')login()">
+      </div>
+      <button class="btn-primary" onclick="login()">Se connecter</button>
+      <p class="auth-switch">Pas encore de compte ? <a onclick="switchAuthTab('register')">S'inscrire</a></p>
     </div>
-    <button class="btn-primary" onclick="login()">Se connecter</button>
-    <p style="margin-top:10px;text-align:center;color:#888;font-size:0.8rem;cursor:pointer" onclick="fermer('overlay-login')">Annuler</p>
+
+    <!-- FORMULAIRE INSCRIPTION -->
+    <div id="form-register" style="display:none">
+      <div id="register-msg"></div>
+      <div class="form-group">
+        <label>Prénom et Nom</label>
+        <input type="text" id="reg-nom" placeholder="Mamadou Diallo" onkeydown="if(event.key==='Enter')register()">
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="reg-email" placeholder="vous@exemple.sn" onkeydown="if(event.key==='Enter')register()">
+      </div>
+      <div class="form-group">
+        <label>Mot de passe</label>
+        <input type="password" id="reg-password" placeholder="Minimum 6 caractères" onkeydown="if(event.key==='Enter')register()">
+      </div>
+      <div class="form-group">
+        <label>Confirmer le mot de passe</label>
+        <input type="password" id="reg-password2" placeholder="••••••••" onkeydown="if(event.key==='Enter')register()">
+      </div>
+      <button class="btn-primary" onclick="register()">Créer mon compte</button>
+      <p class="auth-switch">Déjà un compte ? <a onclick="switchAuthTab('login')">Se connecter</a></p>
+    </div>
+
   </div>
 </div>
 
-<!-- ═══ PANIER ═══ -->
+<!-- PANIER -->
 <div class="overlay" id="overlay-panier">
   <div class="modal">
     <button class="close" onclick="fermer('overlay-panier')">✕</button>
@@ -586,7 +374,7 @@
   </div>
 </div>
 
-<!-- ═══ PAIEMENT ═══ -->
+<!-- PAIEMENT -->
 <div class="overlay" id="overlay-paiement">
   <div class="modal">
     <button class="close" onclick="fermer('overlay-paiement')">✕</button>
@@ -610,7 +398,7 @@
           <div style="font-size:2rem;margin-bottom:8px">🌊</div>
           <p style="font-weight:600;color:#0a5c8a;margin-bottom:4px">Paiement Wave instantané</p>
           <p style="font-size:0.82rem;color:#555;line-height:1.5">
-            En cliquant sur <strong>"Payer via Wave"</strong>, l'application Wave s'ouvrira automatiquement avec le montant déjà rempli. Il vous suffira de confirmer.
+            En cliquant sur <strong>"Payer via Wave"</strong>, l'application Wave s'ouvrira automatiquement avec le montant déjà rempli.
           </p>
         </div>
         <input type="hidden" id="wave-tel" value="771057410">
@@ -641,116 +429,69 @@
   </div>
 </div>
 
-<!-- ═══ ADMIN ═══ -->
+<!-- ADMIN -->
 <div class="overlay" id="overlay-admin">
   <div class="modal modal-admin">
     <button class="close" onclick="fermer('overlay-admin')">✕</button>
     <h2>📊 Espace Administrateur</h2>
-
     <div class="tab-btns">
       <button class="tab-btn active" onclick="switchTab('stats', this)">📈 Stats</button>
       <button class="tab-btn" onclick="switchTab('ajouter', this)">➕ Ajouter</button>
       <button class="tab-btn" onclick="switchTab('liste', this)">📦 Produits</button>
     </div>
-
-    <!-- TAB STATS -->
     <div id="tab-stats">
       <div id="stats-loader" class="stats-loader">⏳ Chargement des statistiques…</div>
       <div id="stats-contenu" style="display:none">
         <div class="stats-grid">
-          <div class="stat-card">
-            <div class="val" id="stat-ca">—</div>
-            <div class="lab">💰 Chiffre d'affaires</div>
-          </div>
-          <div class="stat-card">
-            <div class="val" id="stat-cmd">—</div>
-            <div class="lab">📦 Commandes</div>
-          </div>
-          <div class="stat-card">
-            <div class="val" id="stat-prod">—</div>
-            <div class="lab">🛒 Produits actifs</div>
-          </div>
-          <div class="stat-card">
-            <div class="val" id="stat-users">—</div>
-            <div class="lab">⏳ En attente</div>
-          </div>
+          <div class="stat-card"><div class="val" id="stat-ca">—</div><div class="lab">💰 Chiffre d'affaires</div></div>
+          <div class="stat-card"><div class="val" id="stat-cmd">—</div><div class="lab">📦 Commandes</div></div>
+          <div class="stat-card"><div class="val" id="stat-prod">—</div><div class="lab">🛒 Produits actifs</div></div>
+          <div class="stat-card"><div class="val" id="stat-users">—</div><div class="lab">⏳ En attente</div></div>
         </div>
-
-        <!-- TOP PRODUITS LES PLUS VENDUS -->
         <div class="top-section">
           <h3>🏆 Produits les plus vendus</h3>
           <table class="top-table">
-            <thead>
-              <tr>
-                <th style="width:36px">#</th>
-                <th>Produit</th>
-                <th>Qté vendue</th>
-                <th>Revenus</th>
-              </tr>
-            </thead>
-            <tbody id="top-produits-body">
-              <tr><td colspan="4" class="top-vide">—</td></tr>
-            </tbody>
+            <thead><tr><th style="width:36px">#</th><th>Produit</th><th>Qté vendue</th><th>Revenus</th></tr></thead>
+            <tbody id="top-produits-body"><tr><td colspan="4" class="top-vide">—</td></tr></tbody>
           </table>
         </div>
       </div>
     </div>
-
-    <!-- TAB AJOUTER -->
     <div id="tab-ajouter" style="display:none">
       <div id="form-msg"></div>
-      <div class="form-group">
-        <label>Nom du produit *</label>
-        <input type="text" id="p-nom" placeholder="Ex: Mangue Kent">
-      </div>
+      <div class="form-group"><label>Nom du produit *</label><input type="text" id="p-nom" placeholder="Ex: Mangue Kent"></div>
       <div class="form-group">
         <label>Catégorie *</label>
-        <select id="p-cat">
-          <option>Légumes</option>
-          <option>Fruits</option>
-          <option>Épices</option>
-          <option>Confitures</option>
-        </select>
+        <select id="p-cat"><option>Légumes</option><option>Fruits</option><option>Épices</option><option>Confitures</option></select>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-        <div class="form-group">
-          <label>Prix (FCFA) *</label>
-          <input type="number" id="p-prix" placeholder="500" min="0">
-        </div>
-        <div class="form-group">
-          <label>Stock *</label>
-          <input type="number" id="p-stock" placeholder="50" min="0">
-        </div>
+        <div class="form-group"><label>Prix (FCFA) *</label><input type="number" id="p-prix" placeholder="500" min="0"></div>
+        <div class="form-group"><label>Stock *</label><input type="number" id="p-stock" placeholder="50" min="0"></div>
       </div>
       <div class="form-group">
         <label>Image du produit</label>
-        <!-- Upload fichier -->
         <div class="upload-zone" id="upload-zone">
           <input type="file" id="p-img-file" accept="image/*" onchange="handleFileUpload(this)">
           <span class="upload-icon">📁</span>
           <span class="upload-label">Cliquer pour uploader une image</span>
         </div>
-        <!-- OU URL -->
         <div class="ou-separateur">ou</div>
         <input type="url" id="p-img" placeholder="https://images.unsplash.com/..." oninput="previewImg(this.value)" style="font-size:0.82rem">
         <img id="img-preview" class="img-preview" alt="Aperçu">
       </div>
       <button class="btn-primary" onclick="ajouterProduit()">➕ Ajouter le produit</button>
     </div>
-
-    <!-- TAB LISTE -->
-    <div id="tab-liste" style="display:none">
-      <div id="admin-produits-liste"></div>
-    </div>
+    <div id="tab-liste" style="display:none"><div id="admin-produits-liste"></div></div>
   </div>
 </div>
 
 <script>
-  let token = localStorage.getItem('token') || '';
-  let userRole = localStorage.getItem('role') || '';
-  let panier = [];
-  let methodePaiement = null;
-  let imgUploadBase64 = null; // pour stocker l'image uploadée
+  let token    = localStorage.getItem('token') || '';
+  let userRole = localStorage.getItem('role')  || '';
+  let userName = localStorage.getItem('userName') || '';
+  let panier   = [];
+  let methodePaiement  = null;
+  let imgUploadBase64  = null;
 
   const IMG_FALLBACK = {
     'Aubergine':        'https://images.unsplash.com/photo-1528826007177-f38517ce9a8a?w=600&q=85&fit=crop',
@@ -766,563 +507,369 @@
     'Banane Plantain':  'https://images.unsplash.com/photo-1590165482129-1b8b27698780?w=600&q=85&fit=crop',
     'Confiture Goyave': 'https://images.unsplash.com/photo-1562529536-5b00c4c50d88?w=600&q=85&fit=crop',
   };
-
-  const EMOJI_CAT = { 'Légumes':'🥬','Fruits':'🥭','Épices':'🌶️','Confitures':'🍯' };
-  const BG_CAT    = { 'Légumes':'#e8f5ec','Fruits':'#fff8e1','Épices':'#fce4ec','Confitures':'#f3e5f5' };
+  const EMOJI_CAT = {'Légumes':'🥬','Fruits':'🥭','Épices':'🌶️','Confitures':'🍯'};
+  const BG_CAT    = {'Légumes':'#e8f5ec','Fruits':'#fff8e1','Épices':'#fce4ec','Confitures':'#f3e5f5'};
 
   function resolveImg(p) {
     if (p.img && p.img.startsWith('http')) return p.img;
     return IMG_FALLBACK[p.nom] || null;
   }
-
   function buildImgWrap(p) {
-    const wrap = document.createElement('div');
-    wrap.className = 'card-img-wrap';
-    const badge = document.createElement('span');
-    badge.className = 'card-badge';
-    badge.textContent = p.cat;
-    wrap.appendChild(badge);
+    const wrap = document.createElement('div'); wrap.className = 'card-img-wrap';
+    const badge = document.createElement('span'); badge.className = 'card-badge'; badge.textContent = p.cat; wrap.appendChild(badge);
     const src = resolveImg(p);
     if (src) {
-      const img = document.createElement('img');
-      img.src = src; img.alt = p.nom; img.loading = 'lazy';
-      img.onerror = function() {
-        this.remove();
-        wrap.insertBefore(makePlaceholder(p), badge);
-      };
+      const img = document.createElement('img'); img.src = src; img.alt = p.nom; img.loading = 'lazy';
+      img.onerror = function(){ this.remove(); wrap.insertBefore(makePlaceholder(p), badge); };
       wrap.insertBefore(img, badge);
-    } else {
-      wrap.insertBefore(makePlaceholder(p), badge);
-    }
+    } else { wrap.insertBefore(makePlaceholder(p), badge); }
     return wrap;
   }
-
   function makePlaceholder(p) {
-    const div = document.createElement('div');
-    div.className = 'card-img-placeholder';
-    div.style.background = BG_CAT[p.cat] || '#f0f0f0';
-    div.textContent = EMOJI_CAT[p.cat] || '🛒';
-    return div;
+    const div = document.createElement('div'); div.className = 'card-img-placeholder';
+    div.style.background = BG_CAT[p.cat]||'#f0f0f0'; div.textContent = EMOJI_CAT[p.cat]||'🛒'; return div;
   }
 
-  // ─── Wake-up Render ────────────────────────────
+  // Wake-up Render
   (function wakeUp() {
     let t = 60;
     const banner = document.getElementById('banner-wake');
     const count  = document.getElementById('wake-count');
-    fetch('/api/produits').then(r => { if (r.ok) banner.style.display='none'; })
-      .catch(() => {
-        banner.style.display = 'block';
-        const iv = setInterval(() => {
-          t--; count.textContent = t;
-          if (t <= 0) { clearInterval(iv); banner.innerHTML = '⚠️ Le serveur ne répond pas. Rechargez la page.'; }
-        }, 1000);
-      });
+    fetch('/api/produits').then(r=>{ if(r.ok) banner.style.display='none'; }).catch(()=>{
+      banner.style.display='block';
+      const iv = setInterval(()=>{
+        t--; count.textContent=t;
+        if(t<=0){ clearInterval(iv); banner.innerHTML='⚠️ Le serveur ne répond pas. Rechargez la page.'; }
+      },1000);
+    });
   })();
 
-  // ─── GARDE D'ACCÈS ────────────────────────────
-  // Ouvrir le modal de connexion depuis l'écran de garde
+  // Boutons écran de garde
   document.getElementById('btn-ouvrir-login').addEventListener('click', () => {
+    switchAuthTab('login');
+    document.getElementById('overlay-login').classList.add('show');
+  });
+  document.getElementById('btn-ouvrir-register').addEventListener('click', () => {
+    switchAuthTab('register');
     document.getElementById('overlay-login').classList.add('show');
   });
 
   function supprimerGardeAcces() {
     const garde = document.getElementById('garde-acces');
-    if (garde) {
-      garde.style.opacity = '0';
-      garde.style.transition = 'opacity 0.4s ease';
-      setTimeout(() => garde.remove(), 400);
-    }
+    if (garde) { garde.style.opacity='0'; garde.style.transition='opacity 0.4s ease'; setTimeout(()=>garde.remove(),400); }
   }
 
-  // ─── Init ─────────────────────────────────────
+  // ── Switch entre onglets Connexion / Inscription ──
+  function switchAuthTab(tab) {
+    document.getElementById('form-login').style.display    = tab==='login'    ? 'block' : 'none';
+    document.getElementById('form-register').style.display = tab==='register' ? 'block' : 'none';
+    document.getElementById('tab-login-btn').classList.toggle('active',    tab==='login');
+    document.getElementById('tab-register-btn').classList.toggle('active', tab==='register');
+    document.getElementById('login-msg').innerHTML    = '';
+    document.getElementById('register-msg').innerHTML = '';
+  }
+
+  // ── Après connexion/inscription réussie ──
+  function onAuthSuccess(data) {
+    token    = data.token;
+    userRole = data.data?.role || 'user';
+    userName = data.data?.nom  || data.data?.name || data.data?.email || '';
+    localStorage.setItem('token',    token);
+    localStorage.setItem('role',     userRole);
+    localStorage.setItem('userName', userName);
+    fermer('overlay-login');
+    supprimerGardeAcces();
+    document.getElementById('login-btn').style.display  = 'none';
+    document.getElementById('logout-btn').style.display = 'inline-block';
+    const badge = document.getElementById('user-badge');
+    if (userName) { badge.textContent = '👤 ' + userName.split(' ')[0]; badge.style.display = 'inline-block'; }
+    if (userRole === 'admin') document.getElementById('admin-btn').style.display = 'inline-block';
+  }
+
   init();
   function init() {
     if (token) {
-      // Utilisateur déjà connecté → supprimer la garde directement
       supprimerGardeAcces();
-      document.getElementById('login-btn').style.display = 'none';
+      document.getElementById('login-btn').style.display  = 'none';
       document.getElementById('logout-btn').style.display = 'inline-block';
+      const badge = document.getElementById('user-badge');
+      if (userName) { badge.textContent = '👤 ' + userName.split(' ')[0]; badge.style.display = 'inline-block'; }
       if (userRole === 'admin') document.getElementById('admin-btn').style.display = 'inline-block';
     }
-    // On charge les produits dans tous les cas (ils seront masqués par la garde si non connecté)
     loadProduits();
   }
 
-  // ─── Toast ────────────────────────────────────
   function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2500);
+    const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'),2500);
   }
 
-  // ─── Overlays ─────────────────────────────────
   function fermer(id) { document.getElementById(id).classList.remove('show'); }
-  function ouvrirLogin() { document.getElementById('overlay-login').classList.add('show'); }
+  function ouvrirLogin() { switchAuthTab('login'); document.getElementById('overlay-login').classList.add('show'); }
   function ouvrirPanier() { renderPanier(); document.getElementById('overlay-panier').classList.add('show'); }
-  function ouvrirAdmin() {
-    document.getElementById('overlay-admin').classList.add('show');
-    loadStats();
-  }
+  function ouvrirAdmin()  { document.getElementById('overlay-admin').classList.add('show'); loadStats(); }
 
-  // ─── LOGIN ────────────────────────────────────
+  // ── CONNEXION ──
   async function login() {
-    const email = document.getElementById('email').value.trim();
+    const email    = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value;
     if (!email || !password) {
-      document.getElementById('login-msg').innerHTML = '<div class="msg err">Veuillez remplir tous les champs.</div>';
-      return;
+      document.getElementById('login-msg').innerHTML = '<div class="msg err">Veuillez remplir tous les champs.</div>'; return;
     }
     try {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-      });
+      const res  = await fetch('/api/auth/login', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({email,password}) });
       const data = await res.json();
-      if (data.success) {
-        token = data.token;
-        userRole = data.data?.role || '';
-        localStorage.setItem('token', token);
-        localStorage.setItem('role', userRole);
-        fermer('overlay-login');
-        // Supprimer l'écran de garde avec animation
-        supprimerGardeAcces();
-        // Mettre à jour les boutons
-        document.getElementById('login-btn').style.display = 'none';
-        document.getElementById('logout-btn').style.display = 'inline-block';
-        if (userRole === 'admin') document.getElementById('admin-btn').style.display = 'inline-block';
-        showToast('✅ Bienvenue !');
-      } else {
-        document.getElementById('login-msg').innerHTML = `<div class="msg err">${data.message || 'Email ou mot de passe incorrect'}</div>`;
-      }
+      if (data.success) { onAuthSuccess(data); showToast('✅ Bienvenue !'); }
+      else document.getElementById('login-msg').innerHTML = `<div class="msg err">${data.message||'Email ou mot de passe incorrect'}</div>`;
     } catch(e) {
       document.getElementById('login-msg').innerHTML = '<div class="msg err">Erreur de connexion au serveur.</div>';
     }
   }
 
+  // ── INSCRIPTION ──
+  async function register() {
+    const nom      = document.getElementById('reg-nom').value.trim();
+    const email    = document.getElementById('reg-email').value.trim();
+    const password = document.getElementById('reg-password').value;
+    const password2= document.getElementById('reg-password2').value;
+    const msgDiv   = document.getElementById('register-msg');
+
+    if (!nom || !email || !password || !password2) {
+      msgDiv.innerHTML = '<div class="msg err">Veuillez remplir tous les champs.</div>'; return;
+    }
+    if (password.length < 6) {
+      msgDiv.innerHTML = '<div class="msg err">Le mot de passe doit faire au moins 6 caractères.</div>'; return;
+    }
+    if (password !== password2) {
+      msgDiv.innerHTML = '<div class="msg err">Les mots de passe ne correspondent pas.</div>'; return;
+    }
+    try {
+      const res  = await fetch('/api/auth/register', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ nom, email, password })
+      });
+      const data = await res.json();
+      if (data.success) { onAuthSuccess(data); showToast('🎉 Compte créé ! Bienvenue ' + nom.split(' ')[0] + ' !'); }
+      else msgDiv.innerHTML = `<div class="msg err">${data.message||'Erreur lors de la création du compte'}</div>`;
+    } catch(e) {
+      msgDiv.innerHTML = '<div class="msg err">Erreur de connexion au serveur.</div>';
+    }
+  }
+
   function deconnexion() {
-    token = ''; userRole = '';
-    localStorage.removeItem('token');
-    localStorage.removeItem('role');
-    // Recharger la page pour réafficher la garde
+    token=''; userRole=''; userName='';
+    localStorage.removeItem('token'); localStorage.removeItem('role'); localStorage.removeItem('userName');
     location.reload();
   }
 
-  // ─── PRODUITS ─────────────────────────────────
-  async function loadProduits(cat = 'Tous') {
+  // ── PRODUITS ──
+  async function loadProduits(cat='Tous') {
     const container = document.getElementById('produits');
     container.innerHTML = '<p style="text-align:center;padding:40px;color:#888;grid-column:1/-1">⏳ Chargement...</p>';
     try {
-      const url = cat === 'Tous' ? '/api/produits' : '/api/produits?cat=' + encodeURIComponent(cat);
+      const url = cat==='Tous' ? '/api/produits' : '/api/produits?cat='+encodeURIComponent(cat);
       const res = await fetch(url);
-      if (!res.ok) throw new Error('Erreur serveur ' + res.status);
+      if (!res.ok) throw new Error('Erreur serveur '+res.status);
       const data = await res.json();
-      const liste = Array.isArray(data) ? data : (data.data || []);
-      renderProduits(liste);
+      renderProduits(Array.isArray(data)?data:(data.data||[]));
     } catch(e) {
       container.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#c0392b;background:#fff;border-radius:12px;margin:10px">'
-        + '<div style="font-size:2.5rem;margin-bottom:12px">⚠️</div>'
-        + '<strong>Impossible de charger les produits</strong><br>'
-        + '<span style="font-size:0.85rem;color:#888;margin-top:6px;display:block">' + e.message + '</span>'
-        + '<button onclick="loadProduits()" style="margin-top:16px;padding:8px 20px;background:#1a6b2f;color:white;border:none;border-radius:8px;cursor:pointer">🔄 Réessayer</button>'
-        + '</div>';
+        +'<div style="font-size:2.5rem;margin-bottom:12px">⚠️</div>'
+        +'<strong>Impossible de charger les produits</strong><br>'
+        +'<span style="font-size:0.85rem;color:#888;margin-top:6px;display:block">'+e.message+'</span>'
+        +'<button onclick="loadProduits()" style="margin-top:16px;padding:8px 20px;background:#1a6b2f;color:white;border:none;border-radius:8px;cursor:pointer">🔄 Réessayer</button>'
+        +'</div>';
     }
   }
 
   function renderProduits(liste) {
     const container = document.getElementById('produits');
-    if (!liste.length) {
-      container.innerHTML = '<p style="text-align:center;padding:40px;color:#888;grid-column:1/-1">Aucun produit trouvé.</p>';
-      return;
-    }
-    container.innerHTML = '';
+    if (!liste.length) { container.innerHTML='<p style="text-align:center;padding:40px;color:#888;grid-column:1/-1">Aucun produit trouvé.</p>'; return; }
+    container.innerHTML='';
     liste.forEach(p => {
-      const card = document.createElement('div');
-      card.className = 'card';
+      const card = document.createElement('div'); card.className='card';
       card.appendChild(buildImgWrap(p));
-      const body = document.createElement('div');
-      body.className = 'card-body';
-      body.innerHTML = `
-        <h3>${p.nom}</h3>
-        <div class="stock">Stock : ${p.stock}</div>
-        <div class="prix">${p.prix.toLocaleString()} FCFA</div>
-        <button class="btn-ajouter">🛒 Ajouter</button>
-      `;
-      body.querySelector('.btn-ajouter').addEventListener('click', () => ajouterAuPanier(p._id, p.nom, p.prix));
-      card.appendChild(body);
-      container.appendChild(card);
+      const body = document.createElement('div'); body.className='card-body';
+      body.innerHTML=`<h3>${p.nom}</h3><div class="stock">Stock : ${p.stock}</div><div class="prix">${p.prix.toLocaleString()} FCFA</div><button class="btn-ajouter">🛒 Ajouter</button>`;
+      body.querySelector('.btn-ajouter').addEventListener('click',()=>ajouterAuPanier(p._id,p.nom,p.prix));
+      card.appendChild(body); container.appendChild(card);
     });
   }
 
-  function filtrer(cat, btn) {
-    document.querySelectorAll('.filtres button').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    loadProduits(cat);
+  function filtrer(cat,btn) {
+    document.querySelectorAll('.filtres button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active'); loadProduits(cat);
   }
 
-  // ─── PANIER ───────────────────────────────────
-  function ajouterAuPanier(id, nom, prix) {
-    const exist = panier.find(p => p.id === id);
-    if (exist) exist.qte++;
-    else panier.push({ id, nom, prix, qte: 1 });
-    document.getElementById('panier-count').textContent = panier.reduce((s,p) => s+p.qte, 0);
-    showToast('✅ ' + nom + ' ajouté au panier');
+  // ── PANIER ──
+  function ajouterAuPanier(id,nom,prix) {
+    const exist=panier.find(p=>p.id===id);
+    if(exist) exist.qte++; else panier.push({id,nom,prix,qte:1});
+    document.getElementById('panier-count').textContent=panier.reduce((s,p)=>s+p.qte,0);
+    showToast('✅ '+nom+' ajouté au panier');
   }
-
-  function changerQte(id, delta) {
-    const item = panier.find(p => p.id === id);
-    if (!item) return;
-    item.qte += delta;
-    if (item.qte <= 0) panier = panier.filter(p => p.id !== id);
-    document.getElementById('panier-count').textContent = panier.reduce((s,p) => s+p.qte, 0);
-    renderPanier();
+  function changerQte(id,delta) {
+    const item=panier.find(p=>p.id===id); if(!item) return;
+    item.qte+=delta; if(item.qte<=0) panier=panier.filter(p=>p.id!==id);
+    document.getElementById('panier-count').textContent=panier.reduce((s,p)=>s+p.qte,0); renderPanier();
   }
-
   function renderPanier() {
-    const div = document.getElementById('panier-contenu');
-    if (!panier.length) {
-      div.innerHTML = '<p style="color:#888;text-align:center;padding:20px">Panier vide</p>';
-      return;
-    }
-    div.innerHTML = '';
-    const total = panier.reduce((s,p) => s+p.prix*p.qte, 0);
-    panier.forEach(p => {
-      const row = document.createElement('div');
-      row.className = 'panier-item';
-      row.innerHTML = `
-        <span class="item-nom">${p.nom}</span>
-        <div class="item-qte">
-          <button onclick="changerQte('${p.id}',-1)">−</button>
-          <span>${p.qte}</span>
-          <button onclick="changerQte('${p.id}',1)">+</button>
-        </div>
-        <span class="item-prix">${(p.prix*p.qte).toLocaleString()} FCFA</span>
-      `;
+    const div=document.getElementById('panier-contenu');
+    if(!panier.length){div.innerHTML='<p style="color:#888;text-align:center;padding:20px">Panier vide</p>';return;}
+    div.innerHTML='';
+    const total=panier.reduce((s,p)=>s+p.prix*p.qte,0);
+    panier.forEach(p=>{
+      const row=document.createElement('div'); row.className='panier-item';
+      row.innerHTML=`<span class="item-nom">${p.nom}</span><div class="item-qte"><button onclick="changerQte('${p.id}',-1)">−</button><span>${p.qte}</span><button onclick="changerQte('${p.id}',1)">+</button></div><span class="item-prix">${(p.prix*p.qte).toLocaleString()} FCFA</span>`;
       div.appendChild(row);
     });
-    const tot = document.createElement('div');
-    tot.className = 'panier-total';
-    tot.textContent = 'Total : ' + total.toLocaleString() + ' FCFA';
-    div.appendChild(tot);
+    const tot=document.createElement('div'); tot.className='panier-total';
+    tot.textContent='Total : '+total.toLocaleString()+' FCFA'; div.appendChild(tot);
   }
 
-  // ─── PAIEMENT ─────────────────────────────────
+  // ── PAIEMENT ──
   function ouvrirPaiement() {
-    if (!panier.length) { showToast('⚠️ Panier vide !'); return; }
-    const total = panier.reduce((s,p) => s+p.prix*p.qte, 0);
-    document.getElementById('paiement-etape-1').style.display = 'block';
-    document.getElementById('paiement-etape-2').style.display = 'none';
+    if(!panier.length){showToast('⚠️ Panier vide !');return;}
+    const total=panier.reduce((s,p)=>s+p.prix*p.qte,0);
+    document.getElementById('paiement-etape-1').style.display='block';
+    document.getElementById('paiement-etape-2').style.display='none';
     document.getElementById('form-wave').classList.remove('show');
     document.getElementById('form-carte').classList.remove('show');
-    document.querySelectorAll('.paiement-methode').forEach(m => m.classList.remove('selected'));
-    methodePaiement = null;
-    document.getElementById('paiement-total-affiche').textContent = total.toLocaleString() + ' FCFA';
-    fermer('overlay-panier');
-    document.getElementById('overlay-paiement').classList.add('show');
+    document.querySelectorAll('.paiement-methode').forEach(m=>m.classList.remove('selected'));
+    methodePaiement=null;
+    document.getElementById('paiement-total-affiche').textContent=total.toLocaleString()+' FCFA';
+    fermer('overlay-panier'); document.getElementById('overlay-paiement').classList.add('show');
   }
-
   function choisirMethode(m) {
-    methodePaiement = m;
-    document.querySelectorAll('.paiement-methode').forEach(el => el.classList.remove('selected'));
+    methodePaiement=m;
+    document.querySelectorAll('.paiement-methode').forEach(el=>el.classList.remove('selected'));
     document.getElementById('methode-'+m).classList.add('selected');
     document.getElementById('form-wave').classList.remove('show');
     document.getElementById('form-carte').classList.remove('show');
     document.getElementById('form-'+m).classList.add('show');
   }
-
-  function formatCarte(input) {
-    let v = input.value.replace(/\D/g,'').substring(0,16);
-    input.value = v.replace(/(.{4})/g,'$1 ').trim();
-  }
+  function formatCarte(input){let v=input.value.replace(/\D/g,'').substring(0,16);input.value=v.replace(/(.{4})/g,'$1 ').trim();}
 
   async function confirmerPaiement() {
-    if (!methodePaiement) { showToast('⚠️ Choisissez une méthode'); return; }
-
-    const carteNom = document.getElementById('carte-nom').value.trim();
-    const carteNum = document.getElementById('carte-num').value.trim();
-    const total    = panier.reduce((s,p) => s+p.prix*p.qte, 0);
-
-    // Helper : enregistrer la commande en base
-    async function enregistrerCommande(paiementData) {
-      const articles = panier.map(p => ({
-        produitId: p.id, nom: p.nom, prix: p.prix,
-        quantite: p.qte, sousTotal: p.prix * p.qte
-      }));
-      try {
-        const res = await fetch('/api/commandes', {
-          method: 'POST',
-          headers: { 'Content-Type':'application/json', ...(token ? { Authorization:'Bearer '+token } : {}) },
-          body: JSON.stringify({ articles, paiement: paiementData })
-        });
-        return await res.json();
-      } catch(e) { return { success: false }; }
+    if(!methodePaiement){showToast('⚠️ Choisissez une méthode');return;}
+    const carteNom=document.getElementById('carte-nom').value.trim();
+    const carteNum=document.getElementById('carte-num').value.trim();
+    const total=panier.reduce((s,p)=>s+p.prix*p.qte,0);
+    async function enregistrerCommande(paiementData){
+      const articles=panier.map(p=>({produitId:p.id,nom:p.nom,prix:p.prix,quantite:p.qte,sousTotal:p.prix*p.qte}));
+      try{const res=await fetch('/api/commandes',{method:'POST',headers:{'Content-Type':'application/json',...(token?{Authorization:'Bearer '+token}:{})},body:JSON.stringify({articles,paiement:paiementData})});return await res.json();}
+      catch(e){return{success:false};}
     }
-
-    // ── WAVE : redirection directe vers l'app ──────────────────────────────
-    if (methodePaiement === 'wave') {
-      // 1. Enregistrer la commande
-      await enregistrerCommande({ methode: 'wave' });
-
-      // 2. Construire le deep link Wave
-      const MARCHAND    = '221771057410';
-      const note        = encodeURIComponent('Terroir Senegal');
-      const waveApp     = `wave://send?phone=${MARCHAND}&amount=${total}&note=${note}`;
-      const waveWeb     = `https://www.wave.com/send?phone=%2B${MARCHAND}&amount=${total}&note=${note}`;
-
-      // 3. Ouvrir l'app Wave (ou le web en fallback)
-      window.location.href = waveApp;
-      setTimeout(() => { window.open(waveWeb, '_blank'); }, 1500);
-
-      // 4. Vider panier + confirmation
-      panier = [];
-      document.getElementById('panier-count').textContent = 0;
-      document.getElementById('paiement-etape-1').style.display = 'none';
-      document.getElementById('paiement-etape-2').style.display = 'block';
-      return;
+    if(methodePaiement==='wave'){
+      await enregistrerCommande({methode:'wave'});
+      const MARCHAND='221771057410',note=encodeURIComponent('Terroir Senegal');
+      window.location.href=`wave://send?phone=${MARCHAND}&amount=${total}&note=${note}`;
+      setTimeout(()=>{window.open(`https://www.wave.com/send?phone=%2B${MARCHAND}&amount=${total}&note=${note}`,'_blank');},1500);
+      panier=[]; document.getElementById('panier-count').textContent=0;
+      document.getElementById('paiement-etape-1').style.display='none';
+      document.getElementById('paiement-etape-2').style.display='block'; return;
     }
-
-    // ── CARTE BANCAIRE ─────────────────────────────────────────────────────
-    if (!carteNom || !carteNum) {
-      showToast('⚠️ Remplissez les infos de carte'); return;
-    }
-
-    const result = await enregistrerCommande({
-      methode:   'carte',
-      titulaire: carteNom,
-      derniers4: carteNum.replace(/\s/g,'').slice(-4)
-    });
-
-    if (result && !result.success) {
-      showToast('❌ ' + (result.message || 'Erreur lors de la commande'));
-      return;
-    }
-
-    panier = [];
-    document.getElementById('panier-count').textContent = 0;
-    document.getElementById('paiement-etape-1').style.display = 'none';
-    document.getElementById('paiement-etape-2').style.display = 'block';
+    if(!carteNom||!carteNum){showToast('⚠️ Remplissez les infos de carte');return;}
+    const result=await enregistrerCommande({methode:'carte',titulaire:carteNom,derniers4:carteNum.replace(/\s/g,'').slice(-4)});
+    if(result&&!result.success){showToast('❌ '+(result.message||'Erreur lors de la commande'));return;}
+    panier=[]; document.getElementById('panier-count').textContent=0;
+    document.getElementById('paiement-etape-1').style.display='none';
+    document.getElementById('paiement-etape-2').style.display='block';
   }
+  function finPaiement(){panier=[];document.getElementById('panier-count').textContent=0;fermer('overlay-paiement');}
 
-  function finPaiement() {
-    panier = [];
-    document.getElementById('panier-count').textContent = 0;
-    fermer('overlay-paiement');
+  // ── ADMIN ──
+  function switchTab(tab,btn){
+    ['stats','ajouter','liste'].forEach(t=>document.getElementById('tab-'+t).style.display='none');
+    document.getElementById('tab-'+tab).style.display='block';
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active');
+    if(tab==='liste') loadAdminProduits(); if(tab==='stats') loadStats();
   }
-
-  // ─── ADMIN : STATS + TOP PRODUITS ─────────────
-  function switchTab(tab, btn) {
-    ['stats','ajouter','liste'].forEach(t => document.getElementById('tab-'+t).style.display='none');
-    document.getElementById('tab-'+tab).style.display = 'block';
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    if (tab === 'liste') loadAdminProduits();
-    if (tab === 'stats') loadStats();
-  }
-
-  async function loadStats() {
-    // Afficher le loader
-    document.getElementById('stats-loader').style.display = 'block';
-    document.getElementById('stats-contenu').style.display = 'none';
-
-    try {
-      const res = await fetch('/api/stats', {
-        headers: { Authorization: 'Bearer ' + token }
-      });
-      const data = await res.json();
-
-      if (data.success) {
-        const s = data.data;
-        // Champs exacts retournés par routes/stats.js
-        document.getElementById('stat-ca').textContent   = (s.revenuTotal || 0).toLocaleString('fr-FR') + ' F';
-        document.getElementById('stat-cmd').textContent  = s.totalCommandes || 0;
-        document.getElementById('stat-prod').textContent = s.totalProduits || 0;
-        // Pas de totalUtilisateurs dans le backend actuel → on affiche les commandes en attente
-        document.getElementById('stat-users').textContent= s.enAttente ?? '—';
-
-        // ── Top produits (champs: _id=nom, qte, revenu) ──
-        renderTopProduits(s.topProduits || []);
+  async function loadStats(){
+    document.getElementById('stats-loader').style.display='block';
+    document.getElementById('stats-contenu').style.display='none';
+    try{
+      const res=await fetch('/api/stats',{headers:{Authorization:'Bearer '+token}});
+      const data=await res.json();
+      if(data.success){
+        const s=data.data;
+        document.getElementById('stat-ca').textContent=(s.revenuTotal||0).toLocaleString('fr-FR')+' F';
+        document.getElementById('stat-cmd').textContent=s.totalCommandes||0;
+        document.getElementById('stat-prod').textContent=s.totalProduits||0;
+        document.getElementById('stat-users').textContent=s.enAttente??'—';
+        renderTopProduits(s.topProduits||[]);
       } else {
-        document.getElementById('stat-ca').textContent   = '—';
-        document.getElementById('stat-cmd').textContent  = '—';
-        document.getElementById('stat-prod').textContent = '—';
-        document.getElementById('stat-users').textContent= '—';
+        ['stat-ca','stat-cmd','stat-prod','stat-users'].forEach(id=>document.getElementById(id).textContent='—');
         renderTopProduits([]);
       }
-    } catch(e) {
-      // En cas d'erreur réseau, on tente de charger les produits pour au moins afficher quelque chose
-      try {
-        const resProd = await fetch('/api/produits');
-        const dataProd = await resProd.json();
-        const liste = Array.isArray(dataProd) ? dataProd : (dataProd.data || []);
-        document.getElementById('stat-prod').textContent = liste.length;
-      } catch(e2) {}
+    } catch(e){
+      try{const r=await fetch('/api/produits');const d=await r.json();const l=Array.isArray(d)?d:(d.data||[]);document.getElementById('stat-prod').textContent=l.length;}catch(e2){}
       renderTopProduits([]);
     }
-
-    // Masquer loader, afficher contenu
-    document.getElementById('stats-loader').style.display = 'none';
-    document.getElementById('stats-contenu').style.display = 'block';
+    document.getElementById('stats-loader').style.display='none';
+    document.getElementById('stats-contenu').style.display='block';
   }
-
-  function renderTopProduits(liste) {
-    const tbody = document.getElementById('top-produits-body');
-    const rangs = ['🥇','🥈','🥉','4️⃣','5️⃣'];
-
-    if (!liste || liste.length === 0) {
-      // Pas de données de commandes → afficher un message informatif
-      tbody.innerHTML = `
-        <tr>
-          <td colspan="4" class="top-vide">
-            📊 Aucune vente enregistrée pour le moment.<br>
-            <span style="font-size:0.78rem;color:#bbb;margin-top:4px;display:block">
-              Les produits les plus vendus apparaîtront ici.
-            </span>
-          </td>
-        </tr>
-      `;
-      return;
-    }
-
-    tbody.innerHTML = liste.slice(0, 5).map((p, i) => `
-      <tr>
-        <td class="rang">${rangs[i] || (i+1)}</td>
-        <td><strong>${p._id || 'Produit'}</strong></td>
-        <td><span class="qte-badge">${p.qte || 0}</span></td>
-        <td>${(p.revenu || 0).toLocaleString('fr-FR')} F</td>
-      </tr>
-    `).join('');
+  function renderTopProduits(liste){
+    const tbody=document.getElementById('top-produits-body');
+    const rangs=['🥇','🥈','🥉','4️⃣','5️⃣'];
+    if(!liste||!liste.length){tbody.innerHTML='<tr><td colspan="4" class="top-vide">📊 Aucune vente enregistrée pour le moment.<br><span style="font-size:0.78rem;color:#bbb;margin-top:4px;display:block">Les produits les plus vendus apparaîtront ici.</span></td></tr>';return;}
+    tbody.innerHTML=liste.slice(0,5).map((p,i)=>`<tr><td class="rang">${rangs[i]||(i+1)}</td><td><strong>${p._id||'Produit'}</strong></td><td><span class="qte-badge">${p.qte||0}</span></td><td>${(p.revenu||0).toLocaleString('fr-FR')} F</td></tr>`).join('');
   }
-
-  // ─── ADMIN : AJOUTER PRODUIT ──────────────────
-
-  // Gérer upload fichier → convertir en base64 pour Cloudinary côté serveur
-  function handleFileUpload(input) {
-    const file = input.files[0];
-    if (!file) return;
-    // Vider le champ URL
-    document.getElementById('p-img').value = '';
-    // Prévisualiser
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const preview = document.getElementById('img-preview');
-      preview.src = e.target.result;
-      preview.style.display = 'block';
-      imgUploadBase64 = e.target.result; // stocker pour l'envoi
-      document.getElementById('upload-zone').querySelector('.upload-label').textContent = '✅ ' + file.name;
-    };
+  function handleFileUpload(input){
+    const file=input.files[0]; if(!file) return;
+    document.getElementById('p-img').value='';
+    const reader=new FileReader();
+    reader.onload=(e)=>{const preview=document.getElementById('img-preview');preview.src=e.target.result;preview.style.display='block';imgUploadBase64=e.target.result;document.getElementById('upload-zone').querySelector('.upload-label').textContent='✅ '+file.name;};
     reader.readAsDataURL(file);
   }
-
-  function previewImg(url) {
-    const img = document.getElementById('img-preview');
-    imgUploadBase64 = null; // on utilise l'URL, pas le fichier
-    // Vider l'upload
-    document.getElementById('p-img-file').value = '';
-    document.getElementById('upload-zone').querySelector('.upload-label').textContent = 'Cliquer pour uploader une image';
-    if (url) {
-      img.src = url; img.style.display = 'block';
-      img.onerror = () => { img.style.display = 'none'; };
-    } else {
-      img.style.display = 'none';
-    }
+  function previewImg(url){
+    const img=document.getElementById('img-preview'); imgUploadBase64=null;
+    document.getElementById('p-img-file').value='';
+    document.getElementById('upload-zone').querySelector('.upload-label').textContent='Cliquer pour uploader une image';
+    if(url){img.src=url;img.style.display='block';img.onerror=()=>{img.style.display='none';};}else{img.style.display='none';}
   }
-
-  async function ajouterProduit() {
-    const nom   = document.getElementById('p-nom').value.trim();
-    const cat   = document.getElementById('p-cat').value;
-    const prix  = parseInt(document.getElementById('p-prix').value);
-    const stock = parseInt(document.getElementById('p-stock').value);
-    const imgUrl = document.getElementById('p-img').value.trim();
-    const msgDiv = document.getElementById('form-msg');
-
-    if (!nom || isNaN(prix) || isNaN(stock)) {
-      msgDiv.innerHTML = '<div class="msg err">⚠️ Remplis les champs obligatoires (nom, prix, stock).</div>';
-      return;
-    }
-
-    // Déterminer la source de l'image
-    let img = imgUrl;
-    if (!img && imgUploadBase64) {
-      // Si c'est un fichier uploadé, on l'envoie en base64 au backend
-      // Le backend devra l'uploader sur Cloudinary
-      img = imgUploadBase64;
-    }
-
-    try {
-      const res = await fetch('/api/produits', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
-        body: JSON.stringify({ nom, cat, prix, stock, img })
-      });
-      const data = await res.json();
-      if (data.success) {
-        msgDiv.innerHTML = '<div class="msg ok">✅ Produit "' + nom + '" ajouté avec succès !</div>';
-        // Reset le formulaire
-        ['p-nom','p-prix','p-stock','p-img'].forEach(id => document.getElementById(id).value = '');
-        document.getElementById('p-img-file').value = '';
-        document.getElementById('img-preview').style.display = 'none';
-        document.getElementById('upload-zone').querySelector('.upload-label').textContent = 'Cliquer pour uploader une image';
-        imgUploadBase64 = null;
-        loadProduits();
-        // Effacer le message après 3s
-        setTimeout(() => { msgDiv.innerHTML = ''; }, 3000);
-      } else {
-        msgDiv.innerHTML = `<div class="msg err">${data.message || 'Erreur lors de l\'ajout'}</div>`;
-      }
-    } catch(e) {
-      msgDiv.innerHTML = '<div class="msg err">❌ Erreur serveur. Réessaie.</div>';
-    }
+  async function ajouterProduit(){
+    const nom=document.getElementById('p-nom').value.trim(),cat=document.getElementById('p-cat').value;
+    const prix=parseInt(document.getElementById('p-prix').value),stock=parseInt(document.getElementById('p-stock').value);
+    const imgUrl=document.getElementById('p-img').value.trim(),msgDiv=document.getElementById('form-msg');
+    if(!nom||isNaN(prix)||isNaN(stock)){msgDiv.innerHTML='<div class="msg err">⚠️ Remplis les champs obligatoires (nom, prix, stock).</div>';return;}
+    let img=imgUrl; if(!img&&imgUploadBase64) img=imgUploadBase64;
+    try{
+      const res=await fetch('/api/produits',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({nom,cat,prix,stock,img})});
+      const data=await res.json();
+      if(data.success){
+        msgDiv.innerHTML='<div class="msg ok">✅ Produit "'+nom+'" ajouté avec succès !</div>';
+        ['p-nom','p-prix','p-stock','p-img'].forEach(id=>document.getElementById(id).value='');
+        document.getElementById('p-img-file').value=''; document.getElementById('img-preview').style.display='none';
+        document.getElementById('upload-zone').querySelector('.upload-label').textContent='Cliquer pour uploader une image';
+        imgUploadBase64=null; loadProduits(); setTimeout(()=>{msgDiv.innerHTML='';},3000);
+      } else msgDiv.innerHTML=`<div class="msg err">${data.message||"Erreur lors de l'ajout"}</div>`;
+    }catch(e){msgDiv.innerHTML='<div class="msg err">❌ Erreur serveur. Réessaie.</div>';}
   }
-
-  // ─── ADMIN : LISTE PRODUITS ───────────────────
-  async function loadAdminProduits() {
-    const div = document.getElementById('admin-produits-liste');
-    div.innerHTML = '<p style="color:#aaa;text-align:center;padding:16px">⏳ Chargement…</p>';
-    try {
-      const res = await fetch('/api/produits');
-      const data = await res.json();
-      const liste = Array.isArray(data) ? data : (data.data || []);
-      if (!liste.length) { div.innerHTML = '<p style="color:#888;text-align:center;padding:16px">Aucun produit.</p>'; return; }
-      div.innerHTML = '';
-      liste.forEach(p => {
-        const src = resolveImg(p) || 'https://placehold.co/100?text=' + encodeURIComponent(p.nom);
-        const item = document.createElement('div');
-        item.className = 'produit-list-item';
-        item.innerHTML = `
-          <img src="${src}" onerror="this.src='https://placehold.co/100?text=img'" alt="${p.nom}">
-          <div class="info">
-            <strong>${p.nom}</strong>
-            <br><span style="color:#888">${p.prix.toLocaleString()} FCFA — Stock: ${p.stock} — ${p.cat}</span>
-          </div>
-          <button class="btn-danger" onclick="supprimerProduit('${p._id}')">🗑</button>
-        `;
+  async function loadAdminProduits(){
+    const div=document.getElementById('admin-produits-liste');
+    div.innerHTML='<p style="color:#aaa;text-align:center;padding:16px">⏳ Chargement…</p>';
+    try{
+      const res=await fetch('/api/produits'); const data=await res.json();
+      const liste=Array.isArray(data)?data:(data.data||[]);
+      if(!liste.length){div.innerHTML='<p style="color:#888;text-align:center;padding:16px">Aucun produit.</p>';return;}
+      div.innerHTML='';
+      liste.forEach(p=>{
+        const src=resolveImg(p)||'https://placehold.co/100?text='+encodeURIComponent(p.nom);
+        const item=document.createElement('div'); item.className='produit-list-item';
+        item.innerHTML=`<img src="${src}" onerror="this.src='https://placehold.co/100?text=img'" alt="${p.nom}"><div class="info"><strong>${p.nom}</strong><br><span style="color:#888">${p.prix.toLocaleString()} FCFA — Stock: ${p.stock} — ${p.cat}</span></div><button class="btn-danger" onclick="supprimerProduit('${p._id}')">🗑</button>`;
         div.appendChild(item);
       });
-    } catch(e) {
-      div.innerHTML = '<p style="color:#c0392b;text-align:center">Erreur de chargement</p>';
-    }
+    }catch(e){div.innerHTML='<p style="color:#c0392b;text-align:center">Erreur de chargement</p>';}
   }
-
-  async function supprimerProduit(id) {
-    if (!confirm('Supprimer ce produit définitivement ?')) return;
-    try {
-      const res = await fetch('/api/produits/' + id, {
-        method: 'DELETE',
-        headers: { Authorization: 'Bearer ' + token }
-      });
-      const data = await res.json();
-      if (data.success) {
-        showToast('🗑 Produit supprimé');
-        loadAdminProduits();
-        loadProduits();
-      } else {
-        alert(data.message || 'Erreur lors de la suppression');
-      }
-    } catch(e) {
-      alert('Erreur serveur');
-    }
+  async function supprimerProduit(id){
+    if(!confirm('Supprimer ce produit définitivement ?')) return;
+    try{
+      const res=await fetch('/api/produits/'+id,{method:'DELETE',headers:{Authorization:'Bearer '+token}});
+      const data=await res.json();
+      if(data.success){showToast('🗑 Produit supprimé');loadAdminProduits();loadProduits();}
+      else alert(data.message||'Erreur lors de la suppression');
+    }catch(e){alert('Erreur serveur');}
   }
 </script>
 </body>
