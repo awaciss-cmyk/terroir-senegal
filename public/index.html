@@ -570,21 +570,26 @@
   }
 
   // ── Après connexion/inscription réussie ──
+ 
   function onAuthSuccess(data) {
     token    = data.token;
-    userRole = data.data?.role || 'user';
-    userName = data.data?.nom  || data.data?.name || data.data?.email || '';
+    userRole = data.user?.role || 'user';      // ← data.user pas data.data
+    userName = data.user?.nom  || data.user?.email || '';
     localStorage.setItem('token',    token);
     localStorage.setItem('role',     userRole);
     localStorage.setItem('userName', userName);
+    localStorage.setItem('adminToken', token); // ← toujours sauvegarder
     fermer('overlay-login');
     supprimerGardeAcces();
     document.getElementById('login-btn').style.display  = 'none';
     document.getElementById('logout-btn').style.display = 'inline-block';
     const badge = document.getElementById('user-badge');
     if (userName) { badge.textContent = '👤 ' + userName.split(' ')[0]; badge.style.display = 'inline-block'; }
-    if (userRole === 'admin') document.getElementById('admin-btn').style.display = 'inline-block';
-  }
+    if (userRole === 'admin') {
+      document.getElementById('admin-btn').style.display = 'inline-block';
+      window.location.href = '/admin.html'; // ← redirect vers admin.html
+    }
+}
 
   init();
   function init() {
@@ -789,7 +794,7 @@
     document.getElementById('stats-loader').style.display='block';
     document.getElementById('stats-contenu').style.display='none';
     try{
-      const res=await fetch('/api/stats',{headers:{Authorization:'Bearer '+token}});
+      const res = await fetch('/api/admin/stats', { headers: { Authorization: 'Bearer ' + token } });
       const data=await res.json();
       if(data.success){
         const s=data.data;
