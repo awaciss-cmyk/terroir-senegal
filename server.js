@@ -7,6 +7,8 @@ const https     = require('https');
 const http      = require('http');
 
 const authRoutes      = require('./routes/auth');
+const adminRoutes = require('./routes/admin');
+app.use('/api/admin', adminRoutes);
 const produitsRoutes  = require('./routes/produits');
 const commandesRoutes = require('./routes/commandes');
 const statsRoutes     = require('./routes/stats');
