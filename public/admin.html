@@ -1,275 +1,326 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terroir Sénégal - Panel Admin</title>
-    <style>
-        :root {
-            --primary: #e67e22;
-            --dark: #2c3e50;
-            --light: #f8f9fa;
-            --danger: #e74c3c;
-            --success: #2ecc71;
-            --grey: #bdc3c7;
-        }
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: var(--light);
-            margin: 0;
-            padding: 20px;
-            color: var(--dark);
-        }
-        .container { max-width: 1200px; margin: 0 auto; }
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid var(--primary);
-            padding-bottom: 15px;
-            margin-bottom: 30px;
-        }
-        .btn-logout {
-            background-color: #7f8c8d;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .admin-grid {
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 30px;
-        }
-        @media (max-width: 768px) { .admin-grid { grid-template-columns: 1fr; } }
-        .card {
-            background: white;
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-        }
-        h2 { margin-top: 0; border-bottom: 1px solid #eee; padding-bottom: 10px; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px; }
-        input, select, textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--grey);
-            border-radius: 4px;
-            box-sizing: border-box;
-            font-size: 14px;
-        }
-        button.btn-submit {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            width: 100%;
-            font-weight: bold;
-        }
-        button.btn-submit:hover { background-color: #d35400; }
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 20px;
-        }
-        .product-card {
-            background: #fff;
-            border: 1px solid #e1e8ed;
-            border-radius: 6px;
-            padding: 15px;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-        .product-card img {
-            width: 100%;
-            height: 120px;
-            object-fit: cover;
-            border-radius: 4px;
-            margin-bottom: 10px;
-        }
-        .product-card h4 { 
-            margin: 5px 0; 
-            font-size: 16px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .product-card .price { color: var(--primary); font-weight: bold; margin-bottom: 5px; }
-        .product-card .stock { font-size: 12px; color: #7f8c8d; margin-bottom: 10px; }
-        .btn-delete {
-            background-color: var(--danger);
-            color: white;
-            border: none;
-            padding: 8px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin – Terroir Sénégal</title>
+  <style>
+    :root {
+      --primary: #e67e22;
+      --dark: #2c3e50;
+      --light: #f8f9fa;
+      --danger: #e74c3c;
+      --success: #2ecc71;
+      --grey: #bdc3c7;
+    }
+    * { box-sizing: border-box; }
+    body { font-family: 'Segoe UI', sans-serif; background: var(--light); margin: 0; padding: 20px; color: var(--dark); }
+    .container { max-width: 1200px; margin: 0 auto; }
+    header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--primary); padding-bottom: 15px; margin-bottom: 25px; }
+    .btn-logout { background: #7f8c8d; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; }
+
+    /* TABS */
+    .tabs { display: flex; gap: 10px; margin-bottom: 25px; }
+    .tab { padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; background: white; color: var(--dark); box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+    .tab.active { background: var(--primary); color: white; }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* STATS CARDS */
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+    .stat-card { background: white; border-radius: 8px; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); text-align: center; }
+    .stat-card .value { font-size: 28px; font-weight: bold; color: var(--primary); }
+    .stat-card .label { font-size: 13px; color: #7f8c8d; margin-top: 5px; }
+
+    /* TABLE */
+    .card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 25px; }
+    h2 { margin-top: 0; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th { background: var(--light); padding: 10px; text-align: left; }
+    td { padding: 10px; border-bottom: 1px solid #f0f0f0; }
+    .badge { padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+    .badge.en_attente   { background: #ffeaa7; color: #d35400; }
+    .badge.confirmee    { background: #dfe6e9; color: #2d3436; }
+    .badge.en_livraison { background: #74b9ff; color: white; }
+    .badge.livree       { background: #55efc4; color: #00b894; }
+    .badge.annulee      { background: #fab1a0; color: var(--danger); }
+    select.statut-select { padding: 5px 8px; border-radius: 4px; border: 1px solid var(--grey); font-size: 13px; }
+
+    /* PRODUITS */
+    .admin-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 30px; }
+    @media (max-width: 768px) { .admin-grid { grid-template-columns: 1fr; } }
+    .form-group { margin-bottom: 15px; }
+    label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px; }
+    input, select { width: 100%; padding: 10px; border: 1px solid var(--grey); border-radius: 4px; font-size: 14px; }
+    .btn-submit { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 4px; cursor: pointer; font-size: 16px; width: 100%; font-weight: bold; }
+    .btn-submit:hover { background: #d35400; }
+    .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; }
+    .product-card { background: #fff; border: 1px solid #e1e8ed; border-radius: 6px; padding: 12px; text-align: center; }
+    .product-card img { width: 100%; height: 100px; object-fit: cover; border-radius: 4px; margin-bottom: 8px; }
+    .product-card h4 { margin: 4px 0; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .product-card .price { color: var(--primary); font-weight: bold; font-size: 13px; }
+    .product-card .stock { font-size: 12px; color: #7f8c8d; margin-bottom: 8px; }
+    .btn-delete { background: var(--danger); color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 13px; width: 100%; }
+  </style>
 </head>
 <body>
 
 <script>
-  const user = JSON.parse(localStorage.getItem('user'));
-
-  if (!user || user.role !== 'admin') {
-    window.location.href = "login.html";
-  }
+  const token = localStorage.getItem('adminToken');
+  if (!token) window.location.href = "login.html";
 </script>
 
 <div class="container">
-    <header>
-        <div>
-            <h1 style="margin:0;">🌿 Gestion du Terroir Sénégal</h1>
-            <p style="margin:5px 0 0 0; color: var(--success); font-weight: bold;">Espace d'Administration</p>
-        </div>
-        <button class="btn-logout" onclick="logout()">Se déconnecter</button>
-    </header>
-
-    <div class="admin-grid">
-        <!-- FORMULAIRE -->
-        <div class="card">
-            <h2>Nouveau Produit</h2>
-            <form id="addProductForm">
-                <div class="form-group">
-                    <label>Nom du produit</label>
-                    <input type="text" id="prod-nom" placeholder="Ex: Bissap, Café Touba..." required>
-                </div>
-                <div class="form-group">
-                    <label>Catégorie</label>
-                    <select id="prod-cat">
-                        <option value="Légumes">Légumes</option>
-                        <option value="Fruits">Fruits</option>
-                        <option value="Épices">Épices</option>
-                        <option value="Confitures">Confitures</option>
-                        <option value="Divers">Divers</option> <!-- Cohérent avec l'enum Mongoose -->
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Prix (FCFA)</label>
-                    <input type="number" id="prod-prix" min="0" placeholder="Ex: 500" required>
-                </div>
-                <div class="form-group">
-                    <label>Stock de départ</label>
-                    <input type="number" id="prod-stock" min="0" placeholder="Ex: 50" required>
-                </div>
-                <div class="form-group">
-                    <label>Image du produit</label>
-                    <input type="file" id="prod-image" accept="image/*" required>
-                </div>
-                <button type="submit" class="btn-submit" id="submitBtn">Mettre en ligne</button>
-            </form>
-        </div>
-
-        <!-- LISTE ET SUPPRESSION -->
-        <div class="card">
-            <h2>Catalogue Actuel</h2>
-            <div class="products-grid" id="productsContainer">
-                <p>Chargement des produits de la base...</p>
-            </div>
-        </div>
+  <header>
+    <div>
+      <h1 style="margin:0;">🌿 Terroir Sénégal</h1>
+      <p style="margin:4px 0 0; color:var(--success); font-weight:bold;">Espace Administration</p>
     </div>
+    <button class="btn-logout" onclick="logout()">Se déconnecter</button>
+  </header>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('stats')">📊 Statistiques</button>
+    <button class="tab" onclick="showTab('commandes')">📦 Commandes</button>
+    <button class="tab" onclick="showTab('produits')">🛒 Produits</button>
+  </div>
+
+  <!-- TAB : STATS -->
+  <div id="tab-stats" class="tab-content active">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="value" id="stat-ca">—</div>
+        <div class="label">💰 Chiffre d'affaires (FCFA)</div>
+      </div>
+      <div class="stat-card">
+        <div class="value" id="stat-commandes">—</div>
+        <div class="label">📦 Total commandes</div>
+      </div>
+      <div class="stat-card">
+        <div class="value" id="stat-produits">—</div>
+        <div class="label">🛒 Produits actifs</div>
+      </div>
+      <div class="stat-card">
+        <div class="value" id="stat-attente">—</div>
+        <div class="label">⏳ En attente</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>🏆 Produits les plus vendus</h2>
+      <table>
+        <thead>
+          <tr><th>#</th><th>Produit</th><th>Qté vendue</th><th>Revenus</th></tr>
+        </thead>
+        <tbody id="top-produits-body">
+          <tr><td colspan="4" style="text-align:center;color:#aaa;">Chargement...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TAB : COMMANDES -->
+  <div id="tab-commandes" class="tab-content">
+    <div class="card">
+      <h2>📦 Toutes les commandes</h2>
+      <table>
+        <thead>
+          <tr><th>N°</th><th>Client</th><th>Montant</th><th>Livraison</th><th>Paiement</th><th>Statut</th><th>Date</th></tr>
+        </thead>
+        <tbody id="commandes-body">
+          <tr><td colspan="7" style="text-align:center;color:#aaa;">Chargement...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TAB : PRODUITS -->
+  <div id="tab-produits" class="tab-content">
+    <div class="admin-grid">
+      <div class="card">
+        <h2>Nouveau Produit</h2>
+        <div class="form-group"><label>Nom</label><input type="text" id="prod-nom" placeholder="Ex: Bissap..." required></div>
+        <div class="form-group">
+          <label>Catégorie</label>
+          <select id="prod-cat">
+            <option value="Légumes">Légumes</option>
+            <option value="Fruits">Fruits</option>
+            <option value="Épices">Épices</option>
+            <option value="Confitures">Confitures</option>
+            <option value="Divers">Divers</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Prix (FCFA)</label><input type="number" id="prod-prix" min="0" required></div>
+        <div class="form-group"><label>Stock</label><input type="number" id="prod-stock" min="0" required></div>
+        <div class="form-group"><label>Image</label><input type="file" id="prod-image" accept="image/*" required></div>
+        <button class="btn-submit" id="submitBtn" onclick="addProduct()">Mettre en ligne</button>
+      </div>
+      <div class="card">
+        <h2>Catalogue Actuel</h2>
+        <div class="products-grid" id="productsContainer"><p>Chargement...</p></div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
-    const API_URL = "/api/produits"; 
+  const ADMIN_TOKEN = localStorage.getItem('adminToken');
+  const authHeaders = {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${ADMIN_TOKEN}`
+  };
 
-    document.addEventListener("DOMContentLoaded", fetchProducts);
+  // ── TABS ──
+  function showTab(name) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(`tab-${name}`).classList.add('active');
+    event.target.classList.add('active');
+  }
 
-    // ACTION : Charger le catalogue
-    async function fetchProducts() {
-        const container = document.getElementById("productsContainer");
-        try {
-            const response = await fetch(API_URL);
-            const products = await response.json();
+  // ── INIT ──
+  document.addEventListener('DOMContentLoaded', () => {
+    loadStats();
+    loadTopProduits();
+    loadCommandes();
+    loadProducts();
+  });
 
-            if (!products || products.length === 0) {
-                container.innerHTML = "<p>Aucun produit en stock.</p>";
-                return;
-            }
+  // ── STATS ──
+  async function loadStats() {
+    try {
+      const res  = await fetch('/api/admin/stats', { headers: authHeaders });
+      const data = await res.json();
+      if (!data.success) return;
+      const s = data.stats;
+      document.getElementById('stat-ca').textContent        = s.chiffreAffaires.toLocaleString('fr-FR');
+      document.getElementById('stat-commandes').textContent = s.totalCommandes;
+      document.getElementById('stat-produits').textContent  = s.produitsActifs;
+      document.getElementById('stat-attente').textContent   = s.enAttente;
+    } catch { }
+  }
 
-            container.innerHTML = "";
-            products.forEach(p => {
-                container.innerHTML += `
-                    <div class="product-card" id="product-${p._id}">
-                        <div>
-                            <img src="${p.img}" alt="${p.nom}">
-                            <h4 title="${p.nom}">${p.nom}</h4>
-                            <div class="price">${p.prix} FCFA</div>
-                            <div class="stock">Stock : ${p.stock}</div>
-                        </div>
-                        <button class="btn-delete" onclick="deleteProduct('${p._id}')">Supprimer</button>
-                    </div>
-                `;
-            });
-        } catch (error) {
-            container.innerHTML = "<p style='color:red;'>Erreur lors du chargement des produits.</p>";
-        }
+  // ── TOP PRODUITS ──
+  async function loadTopProduits() {
+    const tbody = document.getElementById('top-produits-body');
+    try {
+      const res  = await fetch('/api/admin/top-produits', { headers: authHeaders });
+      const data = await res.json();
+      if (!data.success || !data.topProduits.length) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#aaa;">Aucune vente enregistrée</td></tr>';
+        return;
+      }
+      tbody.innerHTML = data.topProduits.map((p, i) => `
+        <tr>
+          <td><strong>${i + 1}</strong></td>
+          <td>${p.nom}</td>
+          <td>${p.qteVendue}</td>
+          <td>${p.revenus.toLocaleString('fr-FR')} FCFA</td>
+        </tr>
+      `).join('');
+    } catch {
+      tbody.innerHTML = '<tr><td colspan="4" style="color:red;">Erreur chargement</td></tr>';
     }
+  }
 
-    // ACTION : Envoyer le nouveau produit
-    document.getElementById("addProductForm").addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const submitBtn = document.getElementById("submitBtn");
-        submitBtn.innerText = "Téléversement...";
-        submitBtn.disabled = true;
-
-        const formData = new FormData();
-        formData.append("nom", document.getElementById("prod-nom").value);
-        formData.append("cat", document.getElementById("prod-cat").value);
-        formData.append("prix", document.getElementById("prod-prix").value);
-        formData.append("stock", document.getElementById("prod-stock").value);
-        formData.append("image", document.getElementById("prod-image").files[0]);
-
-        try {
-            const response = await fetch(`${API_URL}/ajouter`, { method: "POST", body: formData });
-            const data = await response.json();
-
-            if (response.ok) {
-                alert("Produit ajouté avec succès !");
-                document.getElementById("addProductForm").reset();
-                fetchProducts();
-            } else {
-                alert("Erreur : " + data.message);
-            }
-        } catch (error) {
-            alert("Erreur réseau avec le serveur.");
-        } finally {
-            submitBtn.innerText = "Mettre en ligne";
-            submitBtn.disabled = false;
-        }
-    });
-
-    // ACTION : Supprimer un produit
-    async function deleteProduct(id) {
-        if (confirm("Voulez-vous vraiment supprimer ce produit du catalogue ?")) {
-            try {
-                const response = await fetch(`${API_URL}/supprimer/${id}`, { method: "DELETE" });
-                const data = await response.json();
-                
-                if (response.ok) {
-                    const productElement = document.getElementById(`product-${id}`);
-                    if (productElement) productElement.remove();
-                } else {
-                    alert("Erreur : " + data.message);
-                }
-            } catch (error) {
-                alert("Erreur réseau.");
-            }
-        }
+  // ── COMMANDES ──
+  async function loadCommandes() {
+    const tbody = document.getElementById('commandes-body');
+    try {
+      const res  = await fetch('/api/admin/commandes', { headers: authHeaders });
+      const data = await res.json();
+      if (!data.success || !data.commandes.length) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#aaa;">Aucune commande</td></tr>';
+        return;
+      }
+      tbody.innerHTML = data.commandes.map(c => `
+        <tr>
+          <td><code>${c.numeroCommande}</code></td>
+          <td>${c.client?.nom || '—'}<br><small>${c.client?.telephone || ''}</small></td>
+          <td>${c.montantTotal.toLocaleString('fr-FR')} FCFA</td>
+          <td>${c.fraisLivraison} FCFA</td>
+          <td>${c.paiement?.methode}</td>
+          <td>
+            <select class="statut-select" onchange="updateStatut('${c._id}', this.value)">
+              ${['en_attente','confirmee','en_livraison','livree','annulee'].map(s =>
+                `<option value="${s}" ${c.statut === s ? 'selected' : ''}>${s.replace('_',' ')}</option>`
+              ).join('')}
+            </select>
+          </td>
+          <td>${new Date(c.createdAt).toLocaleDateString('fr-FR')}</td>
+        </tr>
+      `).join('');
+    } catch {
+      tbody.innerHTML = '<tr><td colspan="7" style="color:red;">Erreur chargement</td></tr>';
     }
+  }
 
-    function logout() {
-        localStorage.removeItem('user');
-        window.location.href = "login.html";
+  async function updateStatut(id, statut) {
+    try {
+      const res = await fetch(`/api/admin/commandes/${id}/statut`, {
+        method: 'PATCH',
+        headers: authHeaders,
+        body: JSON.stringify({ statut })
+      });
+      const data = await res.json();
+      if (!data.success) alert('Erreur mise à jour statut');
+      else loadStats(); // Rafraîchir les stats
+    } catch { alert('Erreur réseau'); }
+  }
+
+  // ── PRODUITS ──
+  async function loadProducts() {
+    const container = document.getElementById('productsContainer');
+    try {
+      const res      = await fetch('/api/produits');
+      const products = await res.json();
+      if (!products?.length) { container.innerHTML = '<p>Aucun produit.</p>'; return; }
+      container.innerHTML = products.map(p => `
+        <div class="product-card" id="product-${p._id}">
+          <img src="${p.img}" alt="${p.nom}">
+          <h4 title="${p.nom}">${p.nom}</h4>
+          <div class="price">${p.prix} FCFA</div>
+          <div class="stock">Stock : ${p.stock}</div>
+          <button class="btn-delete" onclick="deleteProduct('${p._id}')">Supprimer</button>
+        </div>
+      `).join('');
+    } catch {
+      container.innerHTML = '<p style="color:red;">Erreur chargement produits.</p>';
     }
+  }
+
+  async function addProduct() {
+    const btn = document.getElementById('submitBtn');
+    btn.textContent = 'Envoi...'; btn.disabled = true;
+    const formData = new FormData();
+    formData.append('nom',   document.getElementById('prod-nom').value);
+    formData.append('cat',   document.getElementById('prod-cat').value);
+    formData.append('prix',  document.getElementById('prod-prix').value);
+    formData.append('stock', document.getElementById('prod-stock').value);
+    formData.append('image', document.getElementById('prod-image').files[0]);
+    try {
+      const res  = await fetch('/api/produits/ajouter', { method: 'POST', body: formData });
+      const data = await res.json();
+      if (res.ok) { alert('Produit ajouté !'); loadProducts(); }
+      else alert('Erreur : ' + data.message);
+    } catch { alert('Erreur réseau.'); }
+    finally { btn.textContent = 'Mettre en ligne'; btn.disabled = false; }
+  }
+
+  async function deleteProduct(id) {
+    if (!confirm('Supprimer ce produit ?')) return;
+    try {
+      const res = await fetch(`/api/produits/supprimer/${id}`, { method: 'DELETE' });
+      if (res.ok) { document.getElementById(`product-${id}`)?.remove(); }
+    } catch { alert('Erreur réseau.'); }
+  }
+
+  function logout() {
+    localStorage.removeItem('adminToken');
+    window.location.href = 'login.html';
+  }
 </script>
 </body>
 </html>
