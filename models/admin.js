@@ -1,12 +1,10 @@
-const express = require('express');
-const router = express.Router();
-const jwt = require('jsonwebtoken');
+const express  = require('express');
+const router   = express.Router();
+const jwt      = require('jsonwebtoken');
 const Commande = require('../models/Commande');
 const Produit  = require('../models/Produit');
 
-const JWT_SECRET   = process.env.JWT_SECRET || "secret123";
-const ADMIN_EMAIL  = process.env.ADMIN_EMAIL || "admin@gmail.com";
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "123456";
+const JWT_SECRET = process.env.JWT_SECRET || "secret123";
 
 // ── Middleware auth admin ──
 const verifyAdmin = (req, res, next) => {
@@ -15,21 +13,12 @@ const verifyAdmin = (req, res, next) => {
     return res.status(401).json({ success: false, message: "Token manquant" });
   try {
     const decoded = jwt.verify(authHeader.split(' ')[1], JWT_SECRET);
-    if (decoded.role !== 'admin') throw new Error();
+    if (decoded.role !== 'admin') throw new Error('Not admin');
     next();
   } catch {
-    res.status(401).json({ success: false, message: "Token invalide" });
+    return res.status(401).json({ success: false, message: "Token invalide ou expiré" });
   }
 };
-
-// POST /api/admin/login
-router.post('/login', (req, res) => {
-  const { email, password } = req.body;
-  if (email !== ADMIN_EMAIL || password !== ADMIN_PASSWORD)
-    return res.status(401).json({ success: false, message: "Identifiants incorrects" });
-  const token = jwt.sign({ role: "admin" }, JWT_SECRET, { expiresIn: '7d' });
-  res.json({ success: true, token });
-});
 
 // GET /api/admin/stats
 router.get('/stats', verifyAdmin, async (req, res) => {
@@ -65,6 +54,44 @@ router.get('/top-produits', verifyAdmin, async (req, res) => {
       { $unwind: '$articles' },
       {
         $group: {
-          _id:      '$articles.produitId',
-          nom:      { $first: '$articles.nom' },
+          _id:       '$articles.produitId',
+          nom:       { $first: '$articles.nom' },
           qteVendue: { $sum: '$articles.quantite' },
+          revenus:   { $sum: '$articles.sousTotal' }
+        }
+      },
+      { $sort: { qteVendue: -1 } },
+      { $limit: 5 }
+    ]);
+    res.json({ success: true, topProduits: top });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// GET /api/admin/commandes
+router.get('/commandes', verifyAdmin, async (req, res) => {
+  try {
+    const commandes = await Commande.find().sort({ createdAt: -1 }).limit(50);
+    res.json({ success: true, commandes });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// PATCH /api/admin/commandes/:id/statut
+router.patch('/commandes/:id/statut', verifyAdmin, async (req, res) => {
+  try {
+    const { statut } = req.body;
+    const commande = await Commande.findByIdAndUpdate(
+      req.params.id, { statut }, { new: true }
+    );
+    if (!commande)
+      return res.status(404).json({ success: false, message: "Commande introuvable" });
+    res.json({ success: true, commande });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+module.exports = router;
