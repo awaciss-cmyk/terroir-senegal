@@ -1,48 +1,24 @@
-const mongoose = require('mongoose');
+// Dans la route de confirmation/création commande, ajouter les frais :
+router.post('/', async (req, res) => {
+  try {
+    const { articles, paiement, client } = req.body;
 
-const articleSchema = new mongoose.Schema({
-  produitId:  { type: mongoose.Schema.Types.ObjectId, ref: 'Produit' },
-  nom:        { type: String, required: true },
-  prix:       { type: Number, required: true },
-  quantite:   { type: Number, required: true, min: 1 },
-  sousTotal:  { type: Number, required: true },
-});
+    const montantArticles = articles.reduce((sum, a) => sum + a.sousTotal, 0);
+    const fraisLivraison  = 500; // FCFA
+    const montantTotal    = montantArticles + fraisLivraison;
 
-const commandeSchema = new mongoose.Schema({
-  numeroCommande: { type: String, unique: true },
+    const commande = new Commande({
+      articles,
+      paiement,
+      client,
+      montantArticles,
+      fraisLivraison,
+      montantTotal
+    });
 
-  articles:  [articleSchema],
-
-  paiement: {
-    methode: { type: String, enum: ['wave', 'card'], required: true },
-    detail:  { type: String },           // N° téléphone Wave ou 4 derniers chiffres carte
-  },
-
-  client: {
-    nom:       { type: String },
-    telephone: { type: String },
-    userId:    { type: mongoose.Schema.Types.ObjectId, ref: 'Utilisateur' },
-  },
-
-  montantArticles: { type: Number, required: true },
-  fraisLivraison:  { type: Number, default: 500 },
-  montantTotal:    { type: Number, required: true },
-
-  statut: {
-    type: String,
-    enum: ['en_attente', 'confirmee', 'en_livraison', 'livree', 'annulee'],
-    default: 'en_attente',
-  },
-}, { timestamps: true });
-
-// Générer un numéro de commande unique avant sauvegarde
-commandeSchema.pre('save', function (next) {
-  if (!this.numeroCommande) {
-    const ts   = Date.now().toString(36).toUpperCase();
-    const rand = Math.random().toString(36).substring(2, 6).toUpperCase();
-    this.numeroCommande = `TS-${ts}-${rand}`;
+    await commande.save();
+    res.status(201).json({ success: true, commande });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
   }
-  next();
 });
-
-module.exports = mongoose.model('Commande', commandeSchema);
