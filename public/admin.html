@@ -266,7 +266,7 @@
       });
       const data = await res.json();
       if (!data.success) alert('Erreur mise à jour statut');
-      else loadStats(); // Rafraîchir les stats
+      else loadStats();
     } catch { alert('Erreur réseau'); }
   }
 
@@ -275,7 +275,9 @@
     const container = document.getElementById('productsContainer');
     try {
       const res      = await fetch('/api/produits');
-      const products = await res.json();
+      const result   = await res.json();
+      // Supporte { success, data: [...] } ET tableau direct
+      const products = result.data ?? result;
       if (!products?.length) { container.innerHTML = '<p>Aucun produit.</p>'; return; }
       container.innerHTML = products.map(p => `
         <div class="product-card" id="product-${p._id}">
@@ -291,29 +293,64 @@
     }
   }
 
+  // ── CORRECTION : bonne route + token auth ──
   async function addProduct() {
+    const nom   = document.getElementById('prod-nom').value.trim();
+    const prix  = document.getElementById('prod-prix').value;
+    const stock = document.getElementById('prod-stock').value;
+    const image = document.getElementById('prod-image').files[0];
+
+    if (!nom || !prix || !stock || !image) {
+      alert('Remplis tous les champs et choisis une image.');
+      return;
+    }
+
     const btn = document.getElementById('submitBtn');
-    btn.textContent = 'Envoi...'; btn.disabled = true;
+    btn.textContent = 'Envoi...';
+    btn.disabled = true;
+
     const formData = new FormData();
-    formData.append('nom',   document.getElementById('prod-nom').value);
+    formData.append('nom',   nom);
     formData.append('cat',   document.getElementById('prod-cat').value);
-    formData.append('prix',  document.getElementById('prod-prix').value);
-    formData.append('stock', document.getElementById('prod-stock').value);
-    formData.append('image', document.getElementById('prod-image').files[0]);
+    formData.append('prix',  prix);
+    formData.append('stock', stock);
+    formData.append('image', image);
+
     try {
-      const res  = await fetch('/api/produits/ajouter', { method: 'POST', body: formData });
+      const res  = await fetch('/api/produits', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${ADMIN_TOKEN}` }, // ← pas de Content-Type, FormData le gère
+        body: formData
+      });
       const data = await res.json();
-      if (res.ok) { alert('Produit ajouté !'); loadProducts(); }
-      else alert('Erreur : ' + data.message);
-    } catch { alert('Erreur réseau.'); }
-    finally { btn.textContent = 'Mettre en ligne'; btn.disabled = false; }
+      if (res.ok && data.success) {
+        alert('Produit ajouté !');
+        // Réinitialiser le formulaire
+        document.getElementById('prod-nom').value   = '';
+        document.getElementById('prod-prix').value  = '';
+        document.getElementById('prod-stock').value = '';
+        document.getElementById('prod-image').value = '';
+        loadProducts();
+      } else {
+        alert('Erreur : ' + (data.message || 'Inconnue'));
+      }
+    } catch (err) {
+      alert('Erreur réseau. Vérifie ta connexion et réessaie.');
+    } finally {
+      btn.textContent = 'Mettre en ligne';
+      btn.disabled = false;
+    }
   }
 
   async function deleteProduct(id) {
     if (!confirm('Supprimer ce produit ?')) return;
     try {
-      const res = await fetch(`/api/produits/supprimer/${id}`, { method: 'DELETE' });
+      const res = await fetch(`/api/produits/${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${ADMIN_TOKEN}` }
+      });
       if (res.ok) { document.getElementById(`product-${id}`)?.remove(); }
+      else alert('Erreur suppression.');
     } catch { alert('Erreur réseau.'); }
   }
 
